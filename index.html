@@ -309,7 +309,7 @@ INSTRUCTIONS:
       model: {
         provider: "openai",
         model: "gpt-4o",
-        systemMessage: systemPrompt,
+        messages: [{ role: "system", content: systemPrompt }],
         temperature: 0.7,
       },
       voice: {
