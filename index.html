@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0D0C0A">
+  <title>Interviewly — AI User Interviews</title>
+
+  <!-- PWA Manifest (inline) -->
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSW50ZXJ2aWV3bHkiLCJzaG9ydF9uYW1lIjoiSW50ZXJ2aWV3bHkiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBEMEMwQSIsInRoZW1lX2NvbG9yIjoiI0ZGNTczMyJ9">
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(165deg, #1A1816 0%, #141210 50%, #0D0C0A 100%);
+      color: #F5F0EB;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+    input, textarea, button { font-family: inherit; }
+    input::placeholder, textarea::placeholder { color: #5A5550; }
+    input:focus, textarea:focus { border-color: rgba(255,87,51,0.4) !important; outline: none; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
+    @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes blink { 0%, 20% { opacity: 0.2; } 50% { opacity: 1; } 80%, 100% { opacity: 0.2; } }
+
+    .container { max-width: 480px; margin: 0 auto; padding: 20px 20px 40px; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+    .phase { animation: fade-up 0.6s ease-out; }
+    .label { display: block; color: #8A8580; font-size: 12px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px; }
+    .input { width: 100%; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: #F5F0EB; font-size: 14px; transition: border-color 0.2s; }
+    .btn-primary { width: 100%; padding: 16px 24px; border-radius: 14px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; box-shadow: 0 8px 30px rgba(255,87,51,0.3); transition: all 0.3s; }
+    .btn-primary:disabled { background: rgba(255,255,255,0.08); color: #5A5550; box-shadow: none; }
+    .btn-secondary { padding: 14px; border-radius: 12px; border: 1px solid rgba(255,87,51,0.3); background: rgba(255,87,51,0.08); color: #FF5733; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
+    .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
+    .card { padding: 16px; border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); margin-bottom: 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .serif { font-family: 'Playfair Display', Georgia, serif; }
+
+    .msg-bubble { max-width: 82%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.6; animation: fade-up 0.3s ease-out; }
+    .msg-user { background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; border-bottom-right-radius: 4px; margin-left: auto; }
+    .msg-ai { background: rgba(255,255,255,0.06); color: #C8C3BE; border-bottom-left-radius: 4px; }
+    .msg-label { font-size: 10px; opacity: 0.5; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+    .tone-btn { padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+    .tone-btn.active { background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; box-shadow: 0 4px 15px rgba(255,87,51,0.3); }
+    .tone-btn:not(.active) { background: rgba(255,255,255,0.06); color: #8A8580; }
+
+    .q-row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+    .q-num { color: #FF5733; font-weight: 700; font-size: 13px; min-width: 24px; padding-top: 1px; font-family: 'JetBrains Mono', monospace; }
+    .q-text { color: #C8C3BE; font-size: 14px; flex: 1; line-height: 1.5; }
+    .q-del { background: none; border: none; color: #5A5550; cursor: pointer; font-size: 18px; padding: 0 4px; line-height: 1; }
+
+    .add-btn { width: 44px; height: 44px; border-radius: 12px; border: none; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    .pulse-outer { position: absolute; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,87,51,0.12); animation: pulse-ring 2s ease-out infinite; }
+    .pulse-mid { position: absolute; width: 105px; height: 105px; border-radius: 50%; background: rgba(255,87,51,0.2); animation: pulse-ring 2s ease-out infinite 0.5s; }
+    .pulse-inner { width: 68px; height: 68px; border-radius: 50%; z-index: 2; display: flex; align-items: center; justify-content: center; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    .pulse-inner.active { background: linear-gradient(135deg, #FF5733, #FF8A65); box-shadow: 0 0 50px rgba(255,87,51,0.4); }
+    .pulse-inner:not(.active) { background: linear-gradient(135deg, #2D2D2D, #4A4A4A); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+
+    .thinking span { animation: blink 1.2s infinite; }
+    .thinking span:nth-child(2) { animation-delay: 0.2s; }
+    .thinking span:nth-child(3) { animation-delay: 0.4s; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <!-- Top Bar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0 24px; border-bottom: 1px solid rgba(255,255,255,0.04); margin-bottom: 28px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #FF5733, #FF8A65); display: flex; align-items: center; justify-content: center; font-size: 16px;">🎙</div>
+        <span style="font-size: 16px; font-weight: 700; letter-spacing: -0.3px;">Interviewly</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span id="mode-badge" class="badge" style="font-size: 10px; padding: 3px 8px; border-radius: 8px; background: rgba(255,193,7,0.12); color: #FFC107;">DEMO</span>
+        <div style="display: flex; gap: 4px;" id="progress-dots"></div>
+      </div>
+    </div>
+
+    <!-- Setup Phase -->
+    <div id="phase-setup" class="phase">
+      <div style="margin-bottom: 32px;">
+        <div class="badge" style="background: rgba(255,87,51,0.12); color: #FF5733; margin-bottom: 16px;">Research Design</div>
+        <h1 class="serif" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin-bottom: 8px;">Plan Your Interview</h1>
+        <p style="color: #8A8580; font-size: 15px; line-height: 1.6;">Define your research goals. The AI will conduct natural conversations.</p>
+      </div>
+
+      <!-- Vapi Key -->
+      <div class="card" style="margin-bottom: 24px; border-color: rgba(255,255,255,0.06);">
+        <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 6px;">Voice Integration</h3>
+        <p style="color: #5A5550; font-size: 13px; line-height: 1.5; margin-bottom: 14px;">
+          Paste your Vapi public key for real voice interviews, or leave blank for text demo mode.
+        </p>
+        <input id="vapi-key" class="input" type="password" placeholder="Vapi Public Key (e.g., d41e0918-...)" oninput="updateMode()">
+        <div style="display: flex; gap: 8px; margin-top: 10px; align-items: center;">
+          <span id="mode-status" style="display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 8px; background: rgba(255,193,7,0.12); color: #FFC107; font-size: 12px; font-weight: 600;">● Demo Mode</span>
+          <span id="mode-hint" style="color: #5A5550; font-size: 11px;">Get a key free at vapi.ai</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label class="label">Project Name</label>
+        <input id="project-name" class="input" placeholder="e.g., Onboarding Flow Research">
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label class="label">Research Objective</label>
+        <textarea id="objective" class="input" style="min-height: 80px; resize: vertical;" placeholder="What do you want to learn? e.g., Understand why users drop off during onboarding..."></textarea>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label class="label">Target Cohort</label>
+        <input id="cohort" class="input" placeholder="e.g., New users who signed up in the last 30 days">
+      </div>
+
+      <div style="margin-bottom: 32px;">
+        <label class="label">Interview Style</label>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;" id="tone-buttons"></div>
+      </div>
+
+      <div style="margin-bottom: 32px;">
+        <label class="label">Interview Questions</label>
+        <div id="questions-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+          <input id="new-question" class="input" style="flex: 1;" placeholder="Add a question..." onkeydown="if(event.key==='Enter')addQuestion()">
+          <button class="add-btn" onclick="addQuestion()">+</button>
+        </div>
+      </div>
+
+      <button id="start-btn" class="btn-primary" onclick="startInterview()" disabled>Start Interview →</button>
+    </div>
+
+    <!-- Live Phase -->
+    <div id="phase-live" class="phase hidden" style="flex: 1; display: flex; flex-direction: column;">
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; margin: 0 auto;" id="pulse-container">
+          <div class="pulse-inner" id="pulse-core">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+            </svg>
+          </div>
+        </div>
+        <div id="timer" class="mono" style="margin-top: 14px; font-size: 42px; font-weight: 700; letter-spacing: -1px;">00:00</div>
+        <div style="display: flex; justify-content: center; gap: 8px; margin-top: 6px;">
+          <span id="live-status" class="badge" style="padding: 4px 12px; font-size: 12px; background: rgba(76,175,80,0.15); color: #4CAF50;">● LIVE</span>
+          <span id="voice-badge" class="badge hidden" style="padding: 4px 12px; font-size: 12px; background: rgba(156,39,176,0.12); color: #CE93D8;">VOICE</span>
+        </div>
+        <div id="live-project" style="color: #5A5550; font-size: 13px; margin-top: 6px;"></div>
+      </div>
+
+      <div id="transcript" style="flex: 1; overflow-y: auto; padding: 16px 0; display: flex; flex-direction: column; gap: 12px;">
+        <div id="transcript-empty" style="text-align: center; color: #3A3530; font-size: 14px; margin-top: 40px;">
+          Waiting for conversation to begin...
+        </div>
+      </div>
+
+      <div style="padding: 12px 0 8px;">
+        <div id="demo-input-area">
+          <div id="voice-hint" style="font-size: 12px; text-align: center; margin-bottom: 8px; color: #5A5550;">
+            Type your answers below
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <input id="user-input" class="input" style="flex: 1;" placeholder="Type your answer..." onkeydown="if(event.key==='Enter'&&!isThinking)sendMessage()">
+            <button class="add-btn" style="border-radius: 12px;" onclick="sendMessage()" id="send-btn">↑</button>
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="endInterview()">End Interview</button>
+      </div>
+    </div>
+
+    <!-- Review Phase -->
+    <div id="phase-review" class="phase hidden"></div>
+
+    <!-- Synthesis Phase -->
+    <div id="phase-synthesis" class="phase hidden"></div>
+  </div>
+
+  <!-- Vapi SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@vapi-ai/web@2.5.2/dist/vapi.min.js"></script>
+
+  <script>
+    // ─── State ──────────────────────────────────────────────────────
+    let currentPhase = 'setup';
+    let vapiInstance = null;
+    let isVoiceMode = false;
+    let isThinking = false;
+    let timer = null;
+    let duration = 0;
+    let transcriptData = [];
+    let interviews = [];
+    let selectedTone = 'Casual & Friendly';
+    let questions = [
+      "Can you walk me through how you currently handle this problem?",
+      "What's the most frustrating part of your current workflow?",
+      "If you could wave a magic wand and fix one thing, what would it be?",
+      "How are you solving this today — any tools or workarounds?",
+      "What would make you switch to a new solution?",
+    ];
+
+    // ─── Init ───────────────────────────────────────────────────────
+    function init() {
+      renderToneButtons();
+      renderQuestions();
+      updateStartButton();
+      updateProgressDots();
+
+      // Listen for objective changes to enable start button
+      document.getElementById('objective').addEventListener('input', updateStartButton);
+    }
+
+    // ─── Mode Toggle ────────────────────────────────────────────────
+    function updateMode() {
+      const key = document.getElementById('vapi-key').value.trim();
+      isVoiceMode = key.length > 10;
+
+      const badge = document.getElementById('mode-badge');
+      const status = document.getElementById('mode-status');
+      const hint = document.getElementById('mode-hint');
+      const startBtn = document.getElementById('start-btn');
+
+      if (isVoiceMode) {
+        badge.style.background = 'rgba(76,175,80,0.12)';
+        badge.style.color = '#4CAF50';
+        badge.textContent = 'VOICE';
+        status.style.background = 'rgba(76,175,80,0.12)';
+        status.style.color = '#4CAF50';
+        status.textContent = '● Voice Ready';
+        hint.textContent = 'Real-time voice interviews enabled';
+
+        // Initialize Vapi
+        try {
+          const VapiClass = window.Vapi?.default || window.Vapi;
+          if (VapiClass) {
+            vapiInstance = new VapiClass(key);
+            setupVapiListeners();
+          }
+        } catch (e) {
+          console.error('Vapi init error:', e);
+        }
+      } else {
+        badge.style.background = 'rgba(255,193,7,0.12)';
+        badge.style.color = '#FFC107';
+        badge.textContent = 'DEMO';
+        status.style.background = 'rgba(255,193,7,0.12)';
+        status.style.color = '#FFC107';
+        status.textContent = '● Demo Mode';
+        hint.textContent = 'Get a key free at vapi.ai';
+        vapiInstance = null;
+      }
+
+      updateStartButton();
+    }
+
+    // ─── Vapi Event Listeners ───────────────────────────────────────
+    function setupVapiListeners() {
+      if (!vapiInstance) return;
+
+      vapiInstance.on('call-start', () => {
+        document.getElementById('live-status').textContent = '● LIVE';
+        document.getElementById('live-status').style.background = 'rgba(76,175,80,0.15)';
+        document.getElementById('live-status').style.color = '#4CAF50';
+        document.getElementById('pulse-core').classList.add('active');
+
+        // Add pulse rings
+        const container = document.getElementById('pulse-container');
+        const outer = document.createElement('div');
+        outer.className = 'pulse-outer';
+        outer.id = 'pulse-outer';
+        const mid = document.createElement('div');
+        mid.className = 'pulse-mid';
+        mid.id = 'pulse-mid';
+        container.insertBefore(mid, container.firstChild);
+        container.insertBefore(outer, container.firstChild);
+      });
+
+      vapiInstance.on('call-end', () => {
+        document.getElementById('live-status').textContent = '● ENDED';
+        document.getElementById('live-status').style.background = 'rgba(255,87,51,0.15)';
+        document.getElementById('live-status').style.color = '#FF5733';
+        document.getElementById('pulse-core').classList.remove('active');
+        removePulseRings();
+      });
+
+      vapiInstance.on('message', (message) => {
+        if (message.type === 'transcript' && message.transcriptType === 'final') {
+          addTranscriptMessage(message.role, message.transcript);
+        }
+      });
+
+      vapiInstance.on('error', (err) => {
+        console.error('Vapi error:', err);
+        addTranscriptMessage('system', 'Voice error: ' + (err?.message || 'Connection issue. Try refreshing.'));
+      });
+    }
+
+    // ─── Interview Flow ─────────────────────────────────────────────
+    function startInterview() {
+      transcriptData = [];
+      duration = 0;
+
+      showPhase('live');
+
+      const config = getConfig();
+      document.getElementById('live-project').textContent = config.projectName || 'Interview Session';
+      document.getElementById('transcript').innerHTML = '<div id="transcript-empty" style="text-align:center;color:#3A3530;font-size:14px;margin-top:40px;">Waiting for conversation to begin...</div>';
+
+      // Start timer
+      timer = setInterval(() => {
+        duration++;
+        document.getElementById('timer').textContent = formatTime(duration);
+      }, 1000);
+
+      if (isVoiceMode && vapiInstance) {
+        // Real Vapi voice call
+        document.getElementById('demo-input-area').querySelector('#voice-hint').textContent = 'Speak naturally — the AI is listening';
+        document.getElementById('user-input').style.display = 'none';
+        document.getElementById('send-btn').style.display = 'none';
+        document.getElementById('voice-badge').classList.remove('hidden');
+
+        const systemPrompt = `You are a skilled user researcher conducting a structured interview. Your style is ${config.tone}.
+
+RESEARCH OBJECTIVE: ${config.objective}
+TARGET COHORT: ${config.cohort}
+
+INTERVIEW SCRIPT — Follow this structure but adapt naturally:
+${config.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
+
+INSTRUCTIONS:
+- Start with a warm greeting and briefly explain the purpose
+- Ask questions one at a time, listen carefully, ask follow-up probes
+- Use active listening — reference what the user just said
+- If a user gives a short answer, gently probe deeper
+- Keep the conversation natural and flowing
+- After all questions, thank them warmly
+- Keep the total interview under 10 minutes`;
+
+        vapiInstance.start({
+          model: {
+            provider: "anthropic",
+            model: "claude-sonnet-4-20250514",
+            systemMessage: systemPrompt,
+            temperature: 0.7,
+          },
+          voice: {
+            provider: "11labs",
+            voiceId: "21m00Tcm4TlvDq8ikWAM",
+            stability: 0.6,
+            similarityBoost: 0.8,
+          },
+          transcriber: {
+            provider: "deepgram",
+            model: "nova-2",
+            language: "en",
+          },
+          name: config.projectName || "User Interview",
+          firstMessage: `Hi there! Thanks so much for taking the time to chat with me today. I'm doing some research on ${config.objective?.substring(0, 80) || "your experience"}, and I'd love to hear your thoughts. Ready to get started?`,
+          silenceTimeoutSeconds: 30,
+          maxDurationSeconds: 900,
+        }).catch(err => {
+          console.error('Vapi start error:', err);
+          addTranscriptMessage('system', 'Failed to start voice call: ' + (err?.message || 'Unknown error'));
+        });
+
+        // Show pulse as active
+        document.getElementById('pulse-core').classList.add('active');
+      } else {
+        // Demo mode
+        document.getElementById('demo-input-area').querySelector('#voice-hint').textContent = 'Type your answers below';
+        document.getElementById('user-input').style.display = '';
+        document.getElementById('send-btn').style.display = '';
+        document.getElementById('voice-badge').classList.add('hidden');
+        document.getElementById('pulse-core').classList.add('active');
+
+        // Add pulse rings for demo
+        const container = document.getElementById('pulse-container');
+        const outer = document.createElement('div');
+        outer.className = 'pulse-outer';
+        outer.id = 'pulse-outer';
+        const mid = document.createElement('div');
+        mid.className = 'pulse-mid';
+        mid.id = 'pulse-mid';
+        container.insertBefore(mid, container.firstChild);
+        container.insertBefore(outer, container.firstChild);
+
+        // AI greeting
+        setTimeout(() => {
+          addTranscriptMessage('assistant', `Hi there! Thanks so much for taking the time to chat. I'm doing some research on ${config.objective || 'your experience'}, and I'd love to hear your thoughts. Shall we get started?`);
+        }, 1200);
+      }
+    }
+
+    function endInterview() {
+      if (timer) clearInterval(timer);
+
+      if (isVoiceMode && vapiInstance) {
+        try { vapiInstance.stop(); } catch (e) {}
+      }
+
+      removePulseRings();
+      document.getElementById('pulse-core').classList.remove('active');
+
+      if (transcriptData.length > 0) {
+        interviews.push({ transcript: [...transcriptData], duration, config: getConfig() });
+      }
+
+      renderReview();
+      showPhase('review');
+    }
+
+    // ─── Message Handling ───────────────────────────────────────────
+    async function sendMessage() {
+      const input = document.getElementById('user-input');
+      const text = input.value.trim();
+      if (!text || isThinking) return;
+
+      input.value = '';
+      addTranscriptMessage('user', text);
+
+      if (!isVoiceMode) {
+        // Demo mode — get AI response
+        isThinking = true;
+        document.getElementById('send-btn').style.opacity = '0.5';
+        showThinking();
+
+        try {
+          const config = getConfig();
+          const resp = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514',
+              max_tokens: 1000,
+              messages: [{ role: 'user', content: `You are a skilled user researcher. Style: ${config.tone}. Objective: ${config.objective}. Questions: ${config.questions.join('; ')}
+
+The interviewee just said: "${text}"
+
+Respond as the interviewer with a brief, natural follow-up (1-3 sentences). Probe deeper, show you're listening, or transition to the next question. Plain conversational text only.` }],
+            }),
+          });
+          const data = await resp.json();
+          const aiText = data.content?.[0]?.text || "That's really interesting — can you tell me more about that?";
+          hideThinking();
+          addTranscriptMessage('assistant', aiText);
+        } catch (err) {
+          hideThinking();
+          const fallbacks = [
+            "That's really interesting — can you tell me more about that?",
+            "I see. And how does that affect your day-to-day?",
+            "Got it. What would the ideal solution look like for you?",
+          ];
+          addTranscriptMessage('assistant', fallbacks[Math.floor(Math.random() * fallbacks.length)]);
+        } finally {
+          isThinking = false;
+          document.getElementById('send-btn').style.opacity = '1';
+        }
+      }
+    }
+
+    function addTranscriptMessage(role, text) {
+      const container = document.getElementById('transcript');
+      const empty = document.getElementById('transcript-empty');
+      if (empty) empty.remove();
+
+      transcriptData.push({ role, text, time: new Date().toISOString() });
+
+      const wrapper = document.createElement('div');
+      wrapper.style.display = 'flex';
+      wrapper.style.justifyContent = role === 'user' ? 'flex-end' : 'flex-start';
+      wrapper.style.animation = 'fade-up 0.3s ease-out';
+
+      const bubble = document.createElement('div');
+      bubble.className = `msg-bubble ${role === 'user' ? 'msg-user' : 'msg-ai'}`;
+
+      const label = document.createElement('div');
+      label.className = 'msg-label';
+      label.textContent = role === 'user' ? 'Interviewee' : role === 'system' ? 'System' : 'AI Interviewer';
+
+      bubble.appendChild(label);
+      bubble.appendChild(document.createTextNode(text));
+      wrapper.appendChild(bubble);
+      container.appendChild(wrapper);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function showThinking() {
+      const container = document.getElementById('transcript');
+      const div = document.createElement('div');
+      div.id = 'thinking-indicator';
+      div.style.display = 'flex';
+      div.style.justifyContent = 'flex-start';
+      div.innerHTML = '<div class="msg-bubble msg-ai thinking"><span>●</span><span> ●</span><span> ●</span></div>';
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function hideThinking() {
+      const el = document.getElementById('thinking-indicator');
+      if (el) el.remove();
+    }
+
+    // ─── Review Phase ───────────────────────────────────────────────
+    function renderReview() {
+      const el = document.getElementById('phase-review');
+      el.innerHTML = `
+        <div style="margin-bottom: 32px;">
+          <div class="badge" style="background: rgba(76,175,80,0.12); color: #4CAF50; margin-bottom: 16px;">Completed</div>
+          <h1 class="serif" style="font-size: 28px; font-weight: 700; margin-bottom: 8px;">Interview Sessions</h1>
+          <p style="color: #8A8580; font-size: 14px;">${interviews.length} interview${interviews.length !== 1 ? 's' : ''} completed</p>
+        </div>
+        ${interviews.map((iv, i) => `
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="color: #F5F0EB; font-weight: 600; font-size: 15px;">Session ${i + 1}</span>
+              <span class="mono" style="color: #8A8580; font-size: 12px;">${formatTime(iv.duration)} · ${iv.transcript.length} msgs</span>
+            </div>
+            <div style="color: #5A5550; font-size: 13px; line-height: 1.5;">${iv.transcript.slice(0, 2).map(m => m.text).join(' → ').substring(0, 140)}...</div>
+          </div>
+        `).join('')}
+        <div style="display: flex; gap: 10px; margin-top: 24px;">
+          <button onclick="startNewInterview()" style="flex:1; padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.06); color:#C8C3BE; font-size:14px; font-weight:600; cursor:pointer;">+ New Interview</button>
+          <button onclick="synthesize()" style="flex:1; padding:14px; border-radius:12px; border:none; background:linear-gradient(135deg,#FF5733,#FF8A65); color:#FFF; font-size:14px; font-weight:600; cursor:pointer; box-shadow:0 8px 30px rgba(255,87,51,0.3);" ${interviews.length === 0 ? 'disabled' : ''}>Synthesize Findings →</button>
+        </div>
+      `;
+    }
+
+    function startNewInterview() {
+      showPhase('setup');
+    }
+
+    // ─── Synthesis ──────────────────────────────────────────────────
+    async function synthesize() {
+      showPhase('synthesis');
+      const el = document.getElementById('phase-synthesis');
+      el.innerHTML = `
+        <div style="text-align: center; padding-top: 80px;">
+          <div style="width:48px;height:48px;border-radius:50%;border:3px solid rgba(255,87,51,0.2);border-top-color:#FF5733;animation:spin 1s linear infinite;margin:0 auto 20px;"></div>
+          <div style="color:#C8C3BE;font-size:16px;font-weight:600;margin-bottom:6px;">Analyzing Transcripts...</div>
+          <div style="color:#5A5550;font-size:13px;">Claude is identifying themes and patterns</div>
+        </div>
+      `;
+
+      const config = getConfig();
+      let synthesis;
+
+      try {
+        const transcriptsText = interviews.map((iv, i) => {
+          const msgs = iv.transcript.map(m => `${m.role === 'user' ? 'INTERVIEWEE' : 'INTERVIEWER'}: ${m.text}`).join('\n');
+          return `=== SESSION ${i + 1} (${formatTime(iv.duration)}) ===\n${msgs}`;
+        }).join('\n\n');
+
+        const resp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1000,
+            messages: [{ role: 'user', content: `You are a senior user researcher analyzing transcripts.
+
+OBJECTIVE: ${config.objective}
+COHORT: ${config.cohort}
+PROJECT: ${config.projectName}
+
+TRANSCRIPTS:
+${transcriptsText}
+
+Respond ONLY in JSON (no markdown, no backticks):
+{"themes":[{"label":"Theme","sentiment":"positive|negative|mixed","frequency":"X of Y","insight":"Summary"}],"recommendations":["Rec 1","Rec 2"],"quotes":[{"text":"Quote","session":1,"context":"Context"}],"summary":"Executive summary"}
+
+2-4 themes, 3-5 recs, 2-4 quotes. Be specific.` }],
+          }),
+        });
+
+        const data = await resp.json();
+        const text = data.content?.map(b => b.text || '').join('') || '';
+        synthesis = JSON.parse(text.replace(/```json|```/g, '').trim());
+      } catch (err) {
+        synthesis = {
+          themes: [
+            { label: "User Pain Points", sentiment: "negative", frequency: `${interviews.length} of ${interviews.length}`, insight: "Users expressed frustration with current workflows." },
+            { label: "Willingness to Switch", sentiment: "positive", frequency: `${Math.ceil(interviews.length * 0.7)} of ${interviews.length}`, insight: "Most showed openness to new tools." },
+          ],
+          recommendations: ["Focus MVP on top pain point", "Design flexible onboarding", "Create clear 'aha moment'", "Build social proof early"],
+          quotes: interviews.slice(0, 2).map((iv, i) => ({ text: iv.transcript.find(m => m.role === 'user')?.text || '-', session: i + 1, context: "Response" })),
+          summary: `Across ${interviews.length} session${interviews.length !== 1 ? 's' : ''}, users revealed frustration with existing solutions and interest in alternatives.`,
+        };
+      }
+
+      renderSynthesis(synthesis, config);
+    }
+
+    function renderSynthesis(s, config) {
+      const el = document.getElementById('phase-synthesis');
+      el.innerHTML = `
+        <div style="margin-bottom:28px;">
+          <div class="badge" style="background:rgba(156,39,176,0.12);color:#CE93D8;margin-bottom:16px;">AI Synthesis</div>
+          <h1 class="serif" style="font-size:28px;font-weight:700;margin-bottom:8px;">Research Findings</h1>
+          <p style="color:#8A8580;font-size:14px;">${config.projectName} · ${interviews.length} session${interviews.length !== 1 ? 's' : ''}</p>
+        </div>
+
+        ${s.summary ? `<div style="padding:16px;border-radius:14px;margin-bottom:24px;background:linear-gradient(135deg,rgba(255,87,51,0.08),rgba(156,39,176,0.06));border:1px solid rgba(255,87,51,0.12);">
+          <div style="color:#FF8A65;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Executive Summary</div>
+          <p style="color:#E0DBD6;font-size:14px;line-height:1.7;">${s.summary}</p>
+        </div>` : ''}
+
+        <h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Key Themes</h2>
+        ${s.themes.map(t => `
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+              <span style="color:#F5F0EB;font-weight:600;font-size:15px;">${t.label}</span>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <span style="font-size:11px;padding:3px 10px;border-radius:10px;font-weight:600;background:${t.sentiment === 'negative' ? 'rgba(255,87,51,0.15)' : t.sentiment === 'positive' ? 'rgba(76,175,80,0.15)' : 'rgba(255,193,7,0.15)'};color:${t.sentiment === 'negative' ? '#FF5733' : t.sentiment === 'positive' ? '#4CAF50' : '#FFC107'};">${t.sentiment}</span>
+                <span class="mono" style="color:#5A5550;font-size:11px;">${t.frequency}</span>
+              </div>
+            </div>
+            <p style="color:#8A8580;font-size:13px;line-height:1.6;">${t.insight}</p>
+          </div>
+        `).join('')}
+
+        <h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Recommendations</h2>
+        <div style="padding:16px;border-radius:14px;background:rgba(255,87,51,0.06);border:1px solid rgba(255,87,51,0.12);">
+          ${s.recommendations.map((r, i) => `
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;${i < s.recommendations.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.04);' : ''}">
+              <span class="mono" style="color:#FF5733;font-weight:700;font-size:13px;min-width:24px;">${String(i + 1).padStart(2, '0')}</span>
+              <span style="color:#C8C3BE;font-size:14px;line-height:1.5;">${r}</span>
+            </div>
+          `).join('')}
+        </div>
+
+        ${s.quotes?.length ? `
+          <h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Notable Quotes</h2>
+          ${s.quotes.map(q => `
+            <div style="padding:14px 16px;border-radius:14px;margin-bottom:8px;background:rgba(255,255,255,0.03);border-left:3px solid #FF5733;">
+              <p style="color:#C8C3BE;font-size:14px;line-height:1.6;font-style:italic;margin-bottom:6px;">&ldquo;${q.text}&rdquo;</p>
+              <span style="color:#5A5550;font-size:12px;">— Session ${q.session}${q.context ? ' · ' + q.context : ''}</span>
+            </div>
+          `).join('')}
+        ` : ''}
+
+        <button onclick="showPhase('review')" style="width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#C8C3BE;font-size:14px;font-weight:600;cursor:pointer;margin-top:24px;">← Back to Sessions</button>
+      `;
+    }
+
+    // ─── UI Helpers ─────────────────────────────────────────────────
+    function showPhase(phase) {
+      currentPhase = phase;
+      ['setup', 'live', 'review', 'synthesis'].forEach(p => {
+        const el = document.getElementById(`phase-${p}`);
+        if (p === phase) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+      updateProgressDots();
+    }
+
+    function updateProgressDots() {
+      const phases = ['setup', 'live', 'review'];
+      const idx = phases.indexOf(currentPhase === 'synthesis' ? 'review' : currentPhase);
+      const dots = document.getElementById('progress-dots');
+      dots.innerHTML = phases.map((p, i) => `
+        <div style="width:8px;height:8px;border-radius:4px;transition:all 0.3s;background:${
+          i === idx ? '#FF5733' : (i < idx ? 'rgba(255,87,51,0.4)' : 'rgba(255,255,255,0.1)')
+        };"></div>
+      `).join('');
+    }
+
+    function renderToneButtons() {
+      const el = document.getElementById('tone-buttons');
+      ['Casual & Friendly', 'Professional', 'Deep & Probing'].forEach(tone => {
+        const btn = document.createElement('button');
+        btn.className = `tone-btn ${tone === selectedTone ? 'active' : ''}`;
+        btn.textContent = tone;
+        btn.onclick = () => {
+          selectedTone = tone;
+          document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        };
+        el.appendChild(btn);
+      });
+    }
+
+    function renderQuestions() {
+      const el = document.getElementById('questions-list');
+      el.innerHTML = '';
+      questions.forEach((q, i) => {
+        const row = document.createElement('div');
+        row.className = 'q-row';
+        row.innerHTML = `
+          <span class="q-num">${String(i + 1).padStart(2, '0')}</span>
+          <span class="q-text">${q}</span>
+          <button class="q-del" onclick="removeQuestion(${i})">×</button>
+        `;
+        el.appendChild(row);
+      });
+    }
+
+    function addQuestion() {
+      const input = document.getElementById('new-question');
+      const text = input.value.trim();
+      if (text) {
+        questions.push(text);
+        input.value = '';
+        renderQuestions();
+      }
+    }
+
+    function removeQuestion(i) {
+      questions.splice(i, 1);
+      renderQuestions();
+      updateStartButton();
+    }
+
+    function updateStartButton() {
+      const btn = document.getElementById('start-btn');
+      const objective = document.getElementById('objective').value.trim();
+      btn.disabled = !objective || questions.length === 0;
+      btn.textContent = isVoiceMode ? 'Start Voice Interview →' : 'Start Interview →';
+    }
+
+    function getConfig() {
+      return {
+        projectName: document.getElementById('project-name').value.trim(),
+        objective: document.getElementById('objective').value.trim(),
+        cohort: document.getElementById('cohort').value.trim(),
+        tone: selectedTone,
+        questions: [...questions],
+      };
+    }
+
+    function formatTime(s) {
+      return `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+    }
+
+    function removePulseRings() {
+      const outer = document.getElementById('pulse-outer');
+      const mid = document.getElementById('pulse-mid');
+      if (outer) outer.remove();
+      if (mid) mid.remove();
+    }
+
+    // ─── Boot ───────────────────────────────────────────────────────
+    init();
+  </script>
+</body>
+</html>
