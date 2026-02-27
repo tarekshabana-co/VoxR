@@ -68,6 +68,16 @@
     .script-edit-input { width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,87,51,0.3); color: #F5F0EB; font-size: 13px; line-height: 1.5; margin-top: 4px; resize: vertical; min-height: 40px; font-family: inherit; }
     .script-row-del { background: none; border: none; color: #5A5550; cursor: pointer; padding: 4px; font-size: 16px; line-height: 1; flex-shrink: 0; }
     .script-row-del:hover { color: #FF5733; }
+    /* RTL auto-detect */
+    .input, .script-text, .script-edit-input, .msg-bubble { unicode-bidi: plaintext; }
+    [dir="rtl"] .script-title { text-align: right; }
+    /* Theme groups */
+    .theme-group { margin-bottom: 2px; }
+    .theme-header { display: flex; align-items: center; gap: 10px; padding: 14px 20px; background: rgba(255,87,51,0.04); border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .theme-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: rgba(255,87,51,0.12); }
+    .theme-label { font-size: 12px; font-weight: 600; color: #FF5733; letter-spacing: 0.5px; text-transform: uppercase; }
+    .theme-hint { font-size: 11px; color: #5A5550; font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 4px; }
+    .branch-hint { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: #8A8580; background: rgba(255,255,255,0.04); padding: 2px 8px; border-radius: 6px; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -99,15 +109,37 @@
     <!-- STEP 1 -->
     <div id="ws1">
       <h2 class="serif" style="font-size:26px;font-weight:700;margin-bottom:24px;">Define Your Objective</h2>
+
+      <!-- Language Selection -->
+      <div style="margin-bottom:24px;">
+        <label class="label">Interview Language</label>
+        <div style="display:flex;gap:10px;" id="lang-buttons"></div>
+      </div>
+
       <div style="margin-bottom:24px;"><label class="label">Research Objective</label><textarea id="objective" class="input" style="min-height:100px;resize:vertical;" placeholder="What do you want to learn from this research? Describe your goals..."></textarea></div>
       <div style="margin-bottom:24px;"><label class="label">Target Cohort</label><textarea id="cohort" class="input" style="min-height:80px;resize:vertical;" placeholder="Who are the participants? Age, location, role..."></textarea></div>
+
+      <!-- Optional Custom Script -->
+      <div style="margin-bottom:24px;">
+        <button id="custom-script-toggle" onclick="toggleCustomScript()" style="display:flex;align-items:center;gap:8px;background:none;border:none;color:#8A8580;font-size:13px;font-weight:500;cursor:pointer;padding:0;">
+          <span id="custom-script-arrow" style="transition:transform 0.2s;display:inline-block;">▶</span>
+          <span>I already have a script (optional)</span>
+        </button>
+        <div id="custom-script-section" class="hidden" style="margin-top:16px;padding:16px;border-radius:14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);">
+          <p style="color:#5A5550;font-size:12px;margin-bottom:14px;line-height:1.5;">Paste your intro, questions (one per line), and outro. This will skip AI generation in the next step.</p>
+          <div style="margin-bottom:14px;"><label class="label">Intro Message</label><textarea id="custom-intro" class="input" style="min-height:80px;resize:vertical;" placeholder="Hi! Thanks for joining us today. We're conducting research about..."></textarea></div>
+          <div style="margin-bottom:14px;"><label class="label">Questions (one per line)</label><textarea id="custom-questions" class="input" style="min-height:120px;resize:vertical;" placeholder="What's your experience with...?&#10;How do you currently handle...?&#10;What frustrates you most about...?"></textarea></div>
+          <div><label class="label">Outro Message</label><textarea id="custom-outro" class="input" style="min-height:80px;resize:vertical;" placeholder="Thank you so much for your time! Your insights are incredibly valuable and will help us improve..."></textarea></div>
+        </div>
+      </div>
+
       <div class="wizard-actions"><div class="spacer"></div><button class="btn-next" id="s1next" onclick="goStep(2)" disabled>Next →</button></div>
     </div>
 
     <!-- STEP 2 -->
     <div id="ws2" class="hidden">
       <h2 class="serif" style="font-size:26px;font-weight:700;margin-bottom:8px;">Script Preview</h2>
-      <p style="color:#8A8580;font-size:13px;margin-bottom:20px;line-height:1.5;">AI-recommended questions based on your objective. Click ✏️ to edit any item.</p>
+      <p style="color:#8A8580;font-size:13px;margin-bottom:20px;line-height:1.5;">Questions are grouped by theme. The AI will follow-up naturally within each group and adapt based on responses.</p>
       <div id="script-loading" class="hidden" style="text-align:center;padding:40px 0;">
         <div style="width:40px;height:40px;border-radius:50%;border:3px solid rgba(255,87,51,0.2);border-top-color:#FF5733;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
         <div style="color:#C8C3BE;font-size:14px;font-weight:500;">Generating interview script...</div>
@@ -124,6 +156,7 @@
     <!-- STEP 3 -->
     <div id="ws3" class="hidden">
       <h2 class="serif" style="font-size:26px;font-weight:700;margin-bottom:24px;">Interview Settings</h2>
+
       <div class="card" style="margin-bottom:24px;">
         <h3 style="font-size:15px;font-weight:600;margin-bottom:6px;">Voice Integration</h3>
         <p style="color:#5A5550;font-size:13px;line-height:1.5;margin-bottom:14px;">Paste your Vapi public key for real voice interviews, or leave blank for text demo.</p>
@@ -178,17 +211,121 @@
 let currentPhase='setup', wizStep=1, vapiInstance=null, isVoiceMode=false, isThinking=false;
 let timerInterval=null, duration=0, transcriptData=[], interviews=[], selectedTone='Casual & Friendly';
 let scriptIntro='', scriptOutro='', questions=[], editIdx=null;
+let scriptGroups=[]; // [{theme:'...', icon:'🔍', questions:['...'], flow:'...'}]
+let selectedLang='en'; // 'en' or 'ar-eg'
+
+// Language configs
+const LANG_CONFIG = {
+  'en': {
+    label: 'English',
+    flag: '🇺🇸',
+    voiceId: '21m00Tcm4TlvDq8ikWAM', // Rachel
+    transcriber: { provider: 'deepgram', model: 'nova-2', language: 'en' },
+    systemLang: 'Respond in English.',
+  },
+  'ar-eg': {
+    label: 'مصري',
+    flag: '🇪🇬',
+    voiceId: 'XB0fDUnXU5powFXDhCwa', // Charlotte — ElevenLabs multilingual female, works great with Arabic
+    transcriber: { provider: 'deepgram', model: 'nova-2', language: 'ar' },
+    systemLang: 'You MUST respond ONLY in Egyptian Arabic (العامية المصرية). Never use English. Use casual Egyptian dialect, not Modern Standard Arabic.',
+  }
+};
 
 // ═══ INIT ═══
 function init(){
   renderTones();
+  renderLangs();
   document.getElementById('objective').addEventListener('input',()=>{document.getElementById('s1next').disabled=!document.getElementById('objective').value.trim()});
   console.log('[VoxR] Init. Vapi:',typeof Vapi!=='undefined');
 }
 
 // ═══ WIZARD ═══
+function toggleCustomScript(){
+  const sec=document.getElementById('custom-script-section');
+  const arrow=document.getElementById('custom-script-arrow');
+  const isHidden=sec.classList.contains('hidden');
+  sec.classList[isHidden?'remove':'add']('hidden');
+  arrow.style.transform=isHidden?'rotate(90deg)':'rotate(0deg)';
+}
+
+function hasCustomScript(){
+  const qs=document.getElementById('custom-questions').value.trim();
+  return qs.length>10; // at least some meaningful content
+}
+
+async function loadCustomScript(){
+  const intro=document.getElementById('custom-intro').value.trim();
+  const rawScript=document.getElementById('custom-questions').value.trim();
+  const outro=document.getElementById('custom-outro').value.trim();
+  scriptIntro=intro||'Hi! Thanks for taking the time to chat today.';
+  scriptOutro=outro||'Thank you so much for your time!';
+
+  // Show loading while Claude parses the script
+  document.getElementById('script-loading').classList.remove('hidden');
+  document.getElementById('script-card').classList.add('hidden');
+  document.getElementById('add-q-wrap').classList.add('hidden');
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,
+        messages:[{role:'user',content:`You are parsing a user-provided interview script into structured question groups.
+
+RAW SCRIPT:
+${rawScript}
+
+Parse this into structured groups. Your job:
+1. IGNORE any lines that are separators (dashes, equals, asterisks, blank lines, horizontal rules)
+2. IGNORE any lines that are section headers/titles — instead USE them as group theme names
+3. ONLY extract actual interview questions — things that would be asked to a participant
+4. Group related questions together under a theme
+5. If questions have conditional logic (e.g. "if yes, ask..." or "follow up with..."), note that in the flow field
+6. Strip any numbering prefixes (1., Q1:, -, •, etc.) from questions
+
+Respond ONLY in JSON (no markdown, no backticks):
+{
+  "groups": [
+    {
+      "theme": "Theme name in English",
+      "icon": "single emoji",
+      "flow": "English note on how questions relate or branch",
+      "questions": ["Clean question text", "Another question"]
+    }
+  ]
+}
+
+If you can't identify clear themes, put all questions in one group called "Interview Questions".
+Keep question text in its ORIGINAL language — do not translate.`}]})});
+    const d=await r.json(),t=d.content?.map(b=>b.text||'').join('')||'',p=JSON.parse(t.replace(/```json|```/g,'').trim());
+    scriptGroups=p.groups||[];
+    questions=scriptGroups.flatMap(g=>g.questions);
+  }catch(e){
+    console.error('[VoxR] Custom script parse error:',e);
+    // Fallback: smart line filter
+    const lines=rawScript.split('\n').map(l=>l.trim()).filter(l=>{
+      if(!l) return false;
+      if(/^[-=_*~]{3,}$/.test(l)) return false; // separators
+      if(/^#{1,3}\s/.test(l)) return false; // markdown headers
+      if(l.length<10) return false; // too short to be a question
+      if(!/[?؟]/.test(l)&&l.length<30) return false; // no question mark and short = likely a header
+      return true;
+    }).map(l=>l.replace(/^[\d]+[.):]\s*/,'').replace(/^[-•●]\s*/,'').replace(/^Q\d+[.:]\s*/i,'').trim());
+    scriptGroups=[{theme:'Interview Questions',icon:'📋',flow:'Questions will be asked in order',questions:lines}];
+    questions=lines;
+  }
+
+  document.getElementById('script-loading').classList.add('hidden');
+  document.getElementById('script-card').classList.remove('hidden');
+  document.getElementById('add-q-wrap').classList.remove('hidden');
+  renderScript();
+}
+
 async function goStep(s){
-  if(s===2&&wizStep===1){if(!document.getElementById('objective').value.trim())return;await genScript();}
+  if(s===2&&wizStep===1){
+    if(!document.getElementById('objective').value.trim())return;
+    if(hasCustomScript()) await loadCustomScript();
+    else await genScript();
+  }
   wizStep=s;
   for(let i=1;i<=3;i++)document.getElementById('ws'+i).classList[i===s?'remove':'add']('hidden');
   for(let i=1;i<=3;i++){
@@ -210,24 +347,49 @@ async function genScript(){
   document.getElementById('add-q-wrap').classList.add('hidden');
   try{
     const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
-        messages:[{role:'user',content:`You are an expert user researcher. Generate an interview script.
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,
+        messages:[{role:'user',content:`You are an expert user researcher designing an interview script.
 
 RESEARCH OBJECTIVE: ${obj}
 TARGET COHORT: ${coh||'General users'}
+SCRIPT LANGUAGE: ${selectedLang==='ar-eg'?'Egyptian Arabic (العامية المصرية) for the intro, questions, and outro ONLY. Theme names, icons, and flow hints must stay in English.':'English'}
 
 Respond ONLY in JSON (no markdown, no backticks):
-{"intro":"Warm intro (1-2 sentences)","questions":["Q1","Q2","Q3","Q4","Q5"],"outro":"Thank you closing (1 sentence)"}
+{
+  "intro": "Warm conversational intro (2-3 sentences)",
+  "groups": [
+    {
+      "theme": "Theme name in English (e.g. Current Experience, Pain Points)",
+      "icon": "single emoji",
+      "flow": "Brief English note on how these questions connect",
+      "questions": ["Q1", "Q2"]
+    }
+  ],
+  "outro": "Warm closing (1-2 sentences)"
+}
 
-Generate exactly 5 focused open-ended questions that address the objective. Flow from broad to specific. Keep conversational.`}]})});
+RULES:
+- Create 2-4 thematic groups with 1-3 questions each (5-7 questions total)
+- Group related questions together — show the interviewer's logical flow
+- The "flow" field should explain the relationship between questions in English (e.g. "Ask Q2 only if they say yes to Q1", "Use Q2 to dig deeper into whatever they mention in Q1")
+- "theme" and "flow" are ALWAYS in English regardless of script language
+- Questions should be open-ended and conversational
+- Flow from broad discovery → specific pain points → ideal solutions${selectedLang==='ar-eg'?'\n- The "intro", "questions", and "outro" values MUST be in Egyptian Arabic dialect (عامية مصرية), NOT Modern Standard Arabic. Theme names and flow hints stay in English.':''}`}]})});
     const d=await r.json(),t=d.content?.map(b=>b.text||'').join('')||'',p=JSON.parse(t.replace(/```json|```/g,'').trim());
     scriptIntro=p.intro||'Hi! Thanks for chatting. This will take about 10 minutes.';
-    questions=p.questions||[];
+    scriptGroups=p.groups||[];
+    // Flatten questions for Vapi system prompt
+    questions=scriptGroups.flatMap(g=>g.questions);
     scriptOutro=p.outro||'Thank you so much for your time!';
   }catch(e){
     console.error('[VoxR] Script gen error:',e);
     scriptIntro='Hi! I\'m conducting research about '+obj.substring(0,60)+'. This will take about 10-15 minutes.';
-    questions=['Can you walk me through how you currently handle this?','What\'s the most frustrating part of your current workflow?','If you could wave a magic wand and fix one thing, what would it be?','How are you solving this today?','What would make you switch to a new solution?'];
+    scriptGroups=[
+      {theme:'Current Experience',icon:'🔍',flow:'Start broad to understand their world',questions:['Can you walk me through how you currently handle this?','What tools or workarounds are you using today?']},
+      {theme:'Pain Points',icon:'⚡',flow:'Dig into frustrations from their current approach',questions:['What\'s the most frustrating part of your current workflow?','If you could wave a magic wand and fix one thing, what would it be?']},
+      {theme:'Ideal Solution',icon:'💡',flow:'Explore what good looks like to them',questions:['What would make you switch to a new solution?']},
+    ];
+    questions=scriptGroups.flatMap(g=>g.questions);
     scriptOutro='Thank you so much for your time!';
   }
   document.getElementById('script-loading').classList.add('hidden');
@@ -238,22 +400,69 @@ Generate exactly 5 focused open-ended questions that address the objective. Flow
 
 function renderScript(){
   const c=document.getElementById('script-card');
-  let h=sRow('I','Intro',scriptIntro,'intro');
-  questions.forEach((q,i)=>{h+=sRow('Q'+(i+1),'Question '+(i+1),q,'q-'+i,true);});
-  h+=sRow('O','Outro',scriptOutro,'outro');
+  const rtl=selectedLang==='ar-eg'?' dir="rtl"':'';
+  let h='';
+
+  // Intro
+  h+=sRow('I','Intro',scriptIntro,'intro',false,rtl);
+
+  // Themed question groups
+  let qIdx=0;
+  scriptGroups.forEach((g,gi)=>{
+    h+=`<div class="theme-group">`;
+    h+=`<div class="theme-header"${rtl}><div class="theme-icon">${g.icon||'📋'}</div><div><span class="theme-label">${g.theme}</span>${g.flow?'<div class="branch-hint">↳ '+g.flow+'</div>':''}</div></div>`;
+    g.questions.forEach((q,qi)=>{
+      h+=sRow('Q'+(qIdx+1),'Question '+(qIdx+1),q,'q-'+gi+'-'+qi,true,rtl);
+      qIdx++;
+    });
+    h+=`</div>`;
+  });
+
+  // Outro
+  h+=sRow('O','Outro',scriptOutro,'outro',false,rtl);
   c.innerHTML=h;
 }
 
-function sRow(badge,title,text,id,canDel){
-  if(editIdx===id) return `<div class="script-row"><div class="script-badge">${badge}</div><div class="script-content"><div class="script-title">${title}</div><textarea class="script-edit-input" id="ei-${id}">${text}</textarea><div style="display:flex;gap:6px;margin-top:6px;"><button onclick="saveE('${id}')" style="padding:5px 12px;border-radius:6px;border:none;background:#FF5733;color:#FFF;font-size:12px;font-weight:600;cursor:pointer;">Save</button><button onclick="cancelE()" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#8A8580;font-size:12px;cursor:pointer;">Cancel</button></div></div></div>`;
-  return `<div class="script-row"><div class="script-badge">${badge}</div><div class="script-content"><div class="script-title">${title}</div><div class="script-text">${text}</div></div>${canDel?'<button class="script-row-del" onclick="delQ(\''+id+'\')" title="Remove">×</button>':''}<button class="script-edit" onclick="startE('${id}')" title="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>`;
+function sRow(badge,title,text,id,canDel,rtl){
+  rtl=rtl||'';
+  if(editIdx===id) return `<div class="script-row"${rtl}><div class="script-badge">${badge}</div><div class="script-content"><div class="script-title">${title}</div><textarea class="script-edit-input" id="ei-${id}"${rtl}>${text}</textarea><div style="display:flex;gap:6px;margin-top:6px;"><button onclick="saveE('${id}')" style="padding:5px 12px;border-radius:6px;border:none;background:#FF5733;color:#FFF;font-size:12px;font-weight:600;cursor:pointer;">Save</button><button onclick="cancelE()" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#8A8580;font-size:12px;cursor:pointer;">Cancel</button></div></div></div>`;
+  return `<div class="script-row"${rtl}><div class="script-badge">${badge}</div><div class="script-content"><div class="script-title">${title}</div><div class="script-text"${rtl}>${text}</div></div>${canDel?'<button class="script-row-del" onclick="delQ(\''+id+'\')" title="Remove">×</button>':''}<button class="script-edit" onclick="startE('${id}')" title="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>`;
 }
 
 function startE(id){editIdx=id;renderScript();setTimeout(()=>{const e=document.getElementById('ei-'+id);if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}},50);}
-function saveE(id){const e=document.getElementById('ei-'+id);if(!e||!e.value.trim())return;if(id==='intro')scriptIntro=e.value.trim();else if(id==='outro')scriptOutro=e.value.trim();else{const i=parseInt(id.split('-')[1]);questions[i]=e.value.trim();}editIdx=null;renderScript();}
+function saveE(id){
+  const e=document.getElementById('ei-'+id);if(!e||!e.value.trim())return;
+  if(id==='intro') scriptIntro=e.value.trim();
+  else if(id==='outro') scriptOutro=e.value.trim();
+  else if(id.startsWith('q-')){
+    const parts=id.replace('q-','').split('-');
+    const gi=parseInt(parts[0]),qi=parseInt(parts[1]);
+    if(scriptGroups[gi]) scriptGroups[gi].questions[qi]=e.value.trim();
+    questions=scriptGroups.flatMap(g=>g.questions);
+  }
+  editIdx=null;renderScript();
+}
 function cancelE(){editIdx=null;renderScript();}
-function delQ(id){const i=parseInt(id.split('-')[1]);questions.splice(i,1);renderScript();}
-function addQ(){const inp=document.getElementById('add-q-in');if(inp.value.trim()){questions.push(inp.value.trim());inp.value='';renderScript();}}
+function delQ(id){
+  const parts=id.replace('q-','').split('-');
+  const gi=parseInt(parts[0]),qi=parseInt(parts[1]);
+  if(scriptGroups[gi]){
+    scriptGroups[gi].questions.splice(qi,1);
+    if(scriptGroups[gi].questions.length===0) scriptGroups.splice(gi,1);
+    questions=scriptGroups.flatMap(g=>g.questions);
+  }
+  renderScript();
+}
+function addQ(){
+  const inp=document.getElementById('add-q-in');
+  if(inp.value.trim()){
+    // Add to last group, or create a new one
+    if(scriptGroups.length===0) scriptGroups.push({theme:'Additional Questions',icon:'➕',flow:'',questions:[]});
+    scriptGroups[scriptGroups.length-1].questions.push(inp.value.trim());
+    questions=scriptGroups.flatMap(g=>g.questions);
+    inp.value='';renderScript();
+  }
+}
 
 // ═══ MODE ═══
 function updateMode(){
@@ -285,6 +494,7 @@ function setLS(s){const e=document.getElementById('live-status');if(s==='live'){
 // ═══ INTERVIEW ═══
 function startInterview(){
   transcriptData=[];duration=0;showPhase('live');
+  applyLangDirection(); // ensure transcript input RTL is set
   const cfg=getCfg();
   document.getElementById('live-project').textContent=cfg.projectName||'Interview Session';
   document.getElementById('transcript').innerHTML='<div id="transcript-empty" style="text-align:center;color:#3A3530;font-size:14px;margin-top:40px;">Waiting for conversation...</div>';
@@ -295,11 +505,13 @@ function startInterview(){
     document.getElementById('voice-active-hint').classList.remove('hidden');
     document.getElementById('voice-badge').classList.remove('hidden');
     setLS('connecting');
-    const sp=`You are a skilled user researcher. Style: ${cfg.tone}.\n\nOBJECTIVE: ${cfg.objective}\nCOHORT: ${cfg.cohort}\n\nSCRIPT:\nIntro: ${scriptIntro}\n${cfg.questions.map((q,i)=>'Q'+(i+1)+': '+q).join('\n')}\nOutro: ${scriptOutro}\n\nINSTRUCTIONS:\n- Start with intro, ask questions one at a time\n- Listen carefully, ask follow-ups\n- Reference what user said\n- Keep natural, under 10 min\n- Close with outro`;
+    const lang=LANG_CONFIG[selectedLang];
+    const groupScript=scriptGroups.map(g=>`\n[${g.theme}] (${g.flow||'ask in order'})\n${g.questions.map((q,i)=>'  '+(i+1)+'. '+q).join('\n')}`).join('\n');
+    const sp=`You are a skilled user researcher. Style: ${cfg.tone}.\n${lang.systemLang}\n\nOBJECTIVE: ${cfg.objective}\nCOHORT: ${cfg.cohort}\n\nSCRIPT:\nIntro: ${scriptIntro}\n${groupScript}\nOutro: ${scriptOutro}\n\nINSTRUCTIONS:\n- Start with intro, then work through each theme group\n- Within each group, follow the flow guidance (e.g. if it says "ask Q2 only if they say yes", respect that)\n- Listen carefully, ask follow-ups based on what user actually says\n- Reference what user said — don't just read questions robotically\n- Keep natural and conversational, under 10 min\n- Close with outro`;
     vapiInstance.start({
       model:{provider:"openai",model:"gpt-4o",messages:[{role:"system",content:sp}],temperature:0.7},
-      voice:{provider:"11labs",voiceId:"21m00Tcm4TlvDq8ikWAM",stability:0.6,similarityBoost:0.8},
-      transcriber:{provider:"deepgram",model:"nova-2",language:"en"},
+      voice:{provider:"11labs",voiceId:lang.voiceId,stability:0.6,similarityBoost:0.8},
+      transcriber:lang.transcriber,
       name:cfg.projectName||"Interview",firstMessage:scriptIntro,silenceTimeoutSeconds:30,maxDurationSeconds:900,
     }).catch(e=>{addTM('assistant','⚠️ '+( e?.message||JSON.stringify(e)));setLS('ended');});
     document.getElementById('pulse-core').classList.add('active');addPR();
@@ -392,6 +604,56 @@ function renderSynth(s,cfg){
 
 // ═══ HELPERS ═══
 function showPhase(p){currentPhase=p;['setup','live','review','synthesis'].forEach(x=>document.getElementById('phase-'+x).classList[x===p?'remove':'add']('hidden'));}
+function renderLangs(){
+  const el=document.getElementById('lang-buttons');
+  Object.entries(LANG_CONFIG).forEach(([key,cfg])=>{
+    const b=document.createElement('button');
+    const isActive=key===selectedLang;
+    b.style.cssText='padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.2s;display:flex;align-items:center;gap:8px;'+(isActive?'background:linear-gradient(135deg,#FF5733,#FF8A65);color:#FFF;box-shadow:0 4px 15px rgba(255,87,51,0.3);':'background:rgba(255,255,255,0.06);color:#8A8580;');
+    b.innerHTML=cfg.flag+' '+cfg.label;
+    b.onclick=()=>{
+      selectedLang=key;
+      el.querySelectorAll('button').forEach(x=>{x.style.background='rgba(255,255,255,0.06)';x.style.color='#8A8580';x.style.boxShadow='none';});
+      b.style.background='linear-gradient(135deg,#FF5733,#FF8A65)';b.style.color='#FFF';b.style.boxShadow='0 4px 15px rgba(255,87,51,0.3)';
+      applyLangDirection();
+    };
+    el.appendChild(b);
+  });
+}
+
+function applyLangDirection(){
+  const isAr=selectedLang==='ar-eg';
+  const dir=isAr?'rtl':'ltr';
+  // Only script fields get RTL — objective and cohort stay LTR English
+  ['custom-intro','custom-questions','custom-outro'].forEach(id=>{
+    const e=document.getElementById(id);
+    if(e) e.dir=dir;
+  });
+  // Objective & cohort always LTR
+  ['objective','cohort'].forEach(id=>{
+    const e=document.getElementById(id);
+    if(e) e.dir='ltr';
+  });
+  // Custom script placeholders switch to Arabic
+  const ci=document.getElementById('custom-intro');
+  const cq=document.getElementById('custom-questions');
+  const co=document.getElementById('custom-outro');
+  if(isAr){
+    if(ci) ci.placeholder='أهلاً! شكراً إنك معانا النهاردة. إحنا بنعمل بحث عن...';
+    if(cq) cq.placeholder='إيه تجربتك مع...؟\nإزاي بتتعامل مع...؟\nإيه أكتر حاجة بتضايقك في...؟';
+    if(co) co.placeholder='شكراً جداً على وقتك! آراءك مهمة جداً وهتساعدنا نحسّن...';
+  }else{
+    if(ci) ci.placeholder='Hi! Thanks for joining us today. We\'re conducting research about...';
+    if(cq) cq.placeholder='What\'s your experience with...?\nHow do you currently handle...?\nWhat frustrates you most about...?';
+    if(co) co.placeholder='Thank you so much for your time! Your insights are incredibly valuable and will help us improve...';
+  }
+  // Step 2 add-question input
+  const aq=document.getElementById('add-q-in');
+  if(aq){aq.dir=dir;aq.placeholder=isAr?'أضف سؤال تاني...':'Add another question...';}
+  // Transcript input
+  const ui=document.getElementById('user-input');
+  if(ui){ui.dir=dir;ui.placeholder=isAr?'اكتب إجابتك...':'Type your answer...';}
+}
 function renderTones(){const el=document.getElementById('tone-buttons');['Casual & Friendly','Professional','Deep & Probing'].forEach(t=>{const b=document.createElement('button');b.style.cssText='padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.2s;'+(t===selectedTone?'background:linear-gradient(135deg,#FF5733,#FF8A65);color:#FFF;box-shadow:0 4px 15px rgba(255,87,51,0.3);':'background:rgba(255,255,255,0.06);color:#8A8580;');b.textContent=t;b.onclick=()=>{selectedTone=t;el.querySelectorAll('button').forEach(x=>{x.style.background='rgba(255,255,255,0.06)';x.style.color='#8A8580';x.style.boxShadow='none';});b.style.background='linear-gradient(135deg,#FF5733,#FF8A65)';b.style.color='#FFF';b.style.boxShadow='0 4px 15px rgba(255,87,51,0.3)';};el.appendChild(b);});}
 function getCfg(){return{projectName:document.getElementById('project-name').value.trim(),objective:document.getElementById('objective').value.trim(),cohort:document.getElementById('cohort').value.trim(),tone:selectedTone,questions:[...questions]};}
 function fmtT(s){return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');}
