@@ -12,7 +12,7 @@
     body { background: linear-gradient(165deg, #1A1816 0%, #141210 50%, #0D0C0A 100%); color: #F5F0EB; font-family: 'DM Sans', -apple-system, sans-serif; min-height: 100vh; min-height: 100dvh; overflow-x: hidden; }
     input, textarea, button { font-family: inherit; }
     input::placeholder, textarea::placeholder { color: #5A5550; }
-    input:focus, textarea:focus { border-color: rgba(16,185,129,0.4) !important; outline: none; }
+    input:focus, textarea:focus { border-color: rgba(255,87,51,0.4) !important; outline: none; }
     ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
     @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
     @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -27,55 +27,55 @@
     .mono { font-family: 'JetBrains Mono', monospace; }
     .serif { font-family: 'Playfair Display', Georgia, serif; }
     .msg-bubble { max-width: 82%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.6; animation: fade-up 0.3s ease-out; }
-    .msg-user { background: linear-gradient(135deg, #10B981, #34D399); color: #FFF; border-bottom-right-radius: 4px; margin-left: auto; }
+    .msg-user { background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; border-bottom-right-radius: 4px; margin-left: auto; }
     .msg-ai { background: rgba(255,255,255,0.06); color: #C8C3BE; border-bottom-left-radius: 4px; }
     .msg-label { font-size: 10px; opacity: 0.5; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-    .pulse-outer { position: absolute; width: 140px; height: 140px; border-radius: 50%; background: rgba(16,185,129,0.12); animation: pulse-ring 2s ease-out infinite; }
-    .pulse-mid { position: absolute; width: 105px; height: 105px; border-radius: 50%; background: rgba(16,185,129,0.2); animation: pulse-ring 2s ease-out infinite 0.5s; }
-    .pulse-vol { position: absolute; width: 85px; height: 85px; border-radius: 50%; background: rgba(16,185,129,0.15); transition: transform 0.15s ease-out; }
+    .pulse-outer { position: absolute; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,87,51,0.12); animation: pulse-ring 2s ease-out infinite; }
+    .pulse-mid { position: absolute; width: 105px; height: 105px; border-radius: 50%; background: rgba(255,87,51,0.2); animation: pulse-ring 2s ease-out infinite 0.5s; }
+    .pulse-vol { position: absolute; width: 85px; height: 85px; border-radius: 50%; background: rgba(255,87,51,0.15); transition: transform 0.15s ease-out; }
     .pulse-inner { width: 68px; height: 68px; border-radius: 50%; z-index: 2; display: flex; align-items: center; justify-content: center; transition: all 0.5s cubic-bezier(0.4,0,0.2,1); }
-    .pulse-inner.active { background: linear-gradient(135deg, #10B981, #34D399); box-shadow: 0 0 50px rgba(16,185,129,0.4); }
+    .pulse-inner.active { background: linear-gradient(135deg, #FF5733, #FF8A65); box-shadow: 0 0 50px rgba(255,87,51,0.4); }
     .pulse-inner:not(.active) { background: linear-gradient(135deg, #2D2D2D, #4A4A4A); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
     .hidden { display: none !important; }
     .thinking span { animation: blink 1.2s infinite; } .thinking span:nth-child(2) { animation-delay: 0.2s; } .thinking span:nth-child(3) { animation-delay: 0.4s; }
-    .add-btn { width: 44px; height: 44px; border-radius: 12px; border: none; background: linear-gradient(135deg, #10B981, #34D399); color: #FFF; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .add-btn { width: 44px; height: 44px; border-radius: 12px; border: none; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     /* Stepper */
     .stepper { display: flex; align-items: center; margin-bottom: 10px; }
     .step-circle { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; transition: all 0.3s; border: 2px solid rgba(255,255,255,0.1); color: #5A5550; background: transparent; }
-    .step-circle.active { background: linear-gradient(135deg, #10B981, #34D399); border-color: transparent; color: #FFF; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
-    .step-circle.done { background: rgba(16,185,129,0.15); border-color: #10B981; color: #10B981; }
+    .step-circle.active { background: linear-gradient(135deg, #FF5733, #FF8A65); border-color: transparent; color: #FFF; box-shadow: 0 4px 15px rgba(255,87,51,0.3); }
+    .step-circle.done { background: rgba(255,87,51,0.15); border-color: #FF5733; color: #FF5733; }
     .step-line { flex: 1; height: 2px; background: rgba(255,255,255,0.08); margin: 0 8px; transition: background 0.3s; }
-    .step-line.active { background: linear-gradient(90deg, #10B981, #34D399); }
+    .step-line.active { background: linear-gradient(90deg, #FF5733, #FF8A65); }
     .step-labels { display: flex; justify-content: space-between; margin-bottom: 32px; }
     .step-label { font-size: 12px; font-weight: 500; color: #5A5550; transition: color 0.3s; text-align: center; width: 33.33%; }
-    .step-label.active { color: #10B981; font-weight: 600; }
+    .step-label.active { color: #FF5733; font-weight: 600; }
     /* Wizard Actions */
     .wizard-actions { display: flex; align-items: center; gap: 12px; margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
     .wizard-actions .spacer { flex: 1; }
     .btn-back { padding: 12px 24px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: #C8C3BE; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .btn-next { padding: 12px 24px; border-radius: 10px; border: none; background: linear-gradient(135deg, #10B981, #34D399); color: #FFF; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+    .btn-next { padding: 12px 24px; border-radius: 10px; border: none; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(255,87,51,0.3); }
     .btn-next:disabled { background: rgba(255,255,255,0.08); color: #5A5550; box-shadow: none; cursor: default; }
     /* Script Card */
     .script-card { border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
     .script-row { display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .script-row:last-child { border-bottom: none; }
-    .script-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; background: rgba(16,185,129,0.12); color: #10B981; }
+    .script-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; background: rgba(255,87,51,0.12); color: #FF5733; }
     .script-content { flex: 1; min-width: 0; }
     .script-title { font-size: 13px; font-weight: 600; color: #C8C3BE; margin-bottom: 4px; }
     .script-text { font-size: 13px; color: #8A8580; line-height: 1.5; }
     .script-edit { background: none; border: none; color: #5A5550; cursor: pointer; padding: 4px; border-radius: 6px; flex-shrink: 0; }
-    .script-edit:hover { color: #10B981; }
-    .script-edit-input { width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(16,185,129,0.3); color: #F5F0EB; font-size: 13px; line-height: 1.5; margin-top: 4px; resize: vertical; min-height: 40px; font-family: inherit; }
+    .script-edit:hover { color: #FF5733; }
+    .script-edit-input { width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,87,51,0.3); color: #F5F0EB; font-size: 13px; line-height: 1.5; margin-top: 4px; resize: vertical; min-height: 40px; font-family: inherit; }
     .script-row-del { background: none; border: none; color: #5A5550; cursor: pointer; padding: 4px; font-size: 16px; line-height: 1; flex-shrink: 0; }
-    .script-row-del:hover { color: #10B981; }
+    .script-row-del:hover { color: #FF5733; }
     /* RTL auto-detect */
     .input, .script-text, .script-edit-input, .msg-bubble { unicode-bidi: plaintext; }
     [dir="rtl"] .script-title { text-align: right; }
     /* Theme groups */
     .theme-group { margin-bottom: 2px; }
-    .theme-header { display: flex; align-items: center; gap: 10px; padding: 14px 20px; background: rgba(16,185,129,0.04); border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .theme-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: rgba(16,185,129,0.12); }
-    .theme-label { font-size: 12px; font-weight: 600; color: #10B981; letter-spacing: 0.5px; text-transform: uppercase; }
+    .theme-header { display: flex; align-items: center; gap: 10px; padding: 14px 20px; background: rgba(255,87,51,0.04); border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .theme-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; background: rgba(255,87,51,0.12); }
+    .theme-label { font-size: 12px; font-weight: 600; color: #FF5733; letter-spacing: 0.5px; text-transform: uppercase; }
     .theme-hint { font-size: 11px; color: #5A5550; font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 4px; }
     .branch-hint { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: #8A8580; background: rgba(255,255,255,0.04); padding: 2px 8px; border-radius: 6px; margin-top: 4px; }
   </style>
@@ -85,7 +85,7 @@
   <!-- Top Bar -->
   <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 24px;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:28px;">
     <div style="display:flex;align-items:center;gap:10px;">
-      <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#10B981,#34D399);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#FFF;">V</div>
+      <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#FF5733,#FF8A65);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#FFF;">V</div>
       <span style="font-size:16px;font-weight:700;letter-spacing:-0.3px;">VoxR</span>
     </div>
     <span id="mode-badge" style="font-size:10px;padding:3px 8px;border-radius:8px;background:rgba(255,193,7,0.12);color:#FFC107;font-weight:600;">DEMO</span>
@@ -141,7 +141,7 @@
       <h2 class="serif" style="font-size:26px;font-weight:700;margin-bottom:8px;">Script Preview</h2>
       <p style="color:#8A8580;font-size:13px;margin-bottom:20px;line-height:1.5;">Questions are grouped by theme. The AI will follow-up naturally within each group and adapt based on responses.</p>
       <div id="script-loading" class="hidden" style="text-align:center;padding:40px 0;">
-        <div style="width:40px;height:40px;border-radius:50%;border:3px solid rgba(16,185,129,0.2);border-top-color:#10B981;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+        <div style="width:40px;height:40px;border-radius:50%;border:3px solid rgba(255,87,51,0.2);border-top-color:#FF5733;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
         <div style="color:#C8C3BE;font-size:14px;font-weight:500;">Generating interview script...</div>
         <div style="color:#5A5550;font-size:12px;margin-top:4px;">Claude is crafting questions based on your objective</div>
       </div>
@@ -197,7 +197,7 @@
           <button class="add-btn" style="border-radius:12px;" onclick="sendMsg()" id="send-btn">↑</button>
         </div>
       </div>
-      <button onclick="endInterview()" style="width:100%;padding:14px;border-radius:12px;border:1px solid rgba(16,185,129,0.3);background:rgba(16,185,129,0.08);color:#10B981;font-size:14px;font-weight:600;cursor:pointer;">End Interview</button>
+      <button onclick="endInterview()" style="width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,87,51,0.3);background:rgba(255,87,51,0.08);color:#FF5733;font-size:14px;font-weight:600;cursor:pointer;">End Interview</button>
     </div>
   </div>
 
@@ -227,7 +227,7 @@ const LANG_CONFIG = {
     label: 'مصري',
     flag: '🇪🇬',
     voice: { provider: 'azure', voiceId: 'ar-EG-SalmaNeural' },
-    transcriber: { provider: 'talkscriber', model: 'whisper', language: 'ar' },
+    transcriber: { provider: 'deepgram', model: 'nova-3', language: 'ar-EG' },
     systemLang: 'You MUST respond ONLY in Egyptian Arabic (العامية المصرية). Never use English. Never use any English words. Use casual Egyptian dialect only, not Modern Standard Arabic (فصحى). Speak exactly like a friend chatting in Cairo.',
   }
 };
@@ -425,7 +425,7 @@ function renderScript(){
 
 function sRow(badge,title,text,id,canDel,rtl){
   rtl=rtl||'';
-  if(editIdx===id) return `<div class="script-row"${rtl}><div class="script-badge">${badge}</div><div class="script-content"><div class="script-title">${title}</div><textarea class="script-edit-input" id="ei-${id}"${rtl}>${text}</textarea><div style="display:flex;gap:6px;margin-top:6px;"><button onclick="saveE('${id}')" style="padding:5px 12px;border-radius:6px;border:none;background:#10B981;color:#FFF;font-size:12px;font-weight:600;cursor:pointer;">Save</button><button onclick="cancelE()" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#8A8580;font-size:12px;cursor:pointer;">Cancel</button></div></div></div>`;
+  if(editIdx===id) return `<div class="script-row"${rtl}><div class="script-badge">${badge}</div><div class="script-content"><div class="script-title">${title}</div><textarea class="script-edit-input" id="ei-${id}"${rtl}>${text}</textarea><div style="display:flex;gap:6px;margin-top:6px;"><button onclick="saveE('${id}')" style="padding:5px 12px;border-radius:6px;border:none;background:#FF5733;color:#FFF;font-size:12px;font-weight:600;cursor:pointer;">Save</button><button onclick="cancelE()" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#8A8580;font-size:12px;cursor:pointer;">Cancel</button></div></div></div>`;
   return `<div class="script-row"${rtl}><div class="script-badge">${badge}</div><div class="script-content"><div class="script-title">${title}</div><div class="script-text"${rtl}>${text}</div></div>${canDel?'<button class="script-row-del" onclick="delQ(\''+id+'\')" title="Remove">×</button>':''}<button class="script-edit" onclick="startE('${id}')" title="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>`;
 }
 
@@ -489,7 +489,7 @@ function setupVapi(){
   vapiInstance.on('message',m=>{if(m.type==='transcript'&&m.transcriptType==='final')addTM(m.role,m.transcript);});
   vapiInstance.on('error',e=>{console.error('[VoxR] err:',e);addTM('assistant','⚠️ '+( e?.message||e?.error?.message||'Voice error'));});
 }
-function setLS(s){const e=document.getElementById('live-status');if(s==='live'){e.textContent='● LIVE';e.style.background='rgba(76,175,80,0.15)';e.style.color='#4CAF50';}else if(s==='connecting'){e.textContent='● CONNECTING';e.style.background='rgba(255,193,7,0.15)';e.style.color='#FFC107';}else{e.textContent='● ENDED';e.style.background='rgba(16,185,129,0.15)';e.style.color='#10B981';}}
+function setLS(s){const e=document.getElementById('live-status');if(s==='live'){e.textContent='● LIVE';e.style.background='rgba(76,175,80,0.15)';e.style.color='#4CAF50';}else if(s==='connecting'){e.textContent='● CONNECTING';e.style.background='rgba(255,193,7,0.15)';e.style.color='#FFC107';}else{e.textContent='● ENDED';e.style.background='rgba(255,87,51,0.15)';e.style.color='#FF5733';}}
 
 // ═══ INTERVIEW ═══
 function startInterview(){
@@ -570,13 +570,13 @@ function renderReview(){
   const el=document.getElementById('phase-review');
   el.innerHTML='<div style="margin-bottom:32px;"><div class="badge" style="background:rgba(76,175,80,0.12);color:#4CAF50;margin-bottom:16px;">Completed</div><h1 class="serif" style="font-size:28px;font-weight:700;margin-bottom:8px;">Interview Sessions</h1><p style="color:#8A8580;font-size:14px;">'+interviews.length+' interview'+(interviews.length!==1?'s':'')+' completed</p></div>'+
     interviews.map((iv,i)=>'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="color:#F5F0EB;font-weight:600;">Session '+(i+1)+'</span><span class="mono" style="color:#8A8580;font-size:12px;">'+fmtT(iv.duration)+' · '+iv.transcript.length+' msgs</span></div><div style="color:#5A5550;font-size:13px;line-height:1.5;">'+iv.transcript.slice(0,2).map(m=>m.text).join(' → ').substring(0,140)+'...</div></div>').join('')+
-    '<div style="display:flex;gap:10px;margin-top:24px;"><button onclick="wizStep=1;goStep(1);showPhase(\'setup\')" style="flex:1;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#C8C3BE;font-size:14px;font-weight:600;cursor:pointer;">+ New</button><button onclick="doSynth()" style="flex:1;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#10B981,#34D399);color:#FFF;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(16,185,129,0.3);">Synthesize →</button></div>';
+    '<div style="display:flex;gap:10px;margin-top:24px;"><button onclick="wizStep=1;goStep(1);showPhase(\'setup\')" style="flex:1;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#C8C3BE;font-size:14px;font-weight:600;cursor:pointer;">+ New</button><button onclick="doSynth()" style="flex:1;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#FF5733,#FF8A65);color:#FFF;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(255,87,51,0.3);">Synthesize →</button></div>';
 }
 
 // ═══ SYNTHESIS ═══
 async function doSynth(){
   showPhase('synthesis');const el=document.getElementById('phase-synthesis');
-  el.innerHTML='<div style="text-align:center;padding-top:80px;"><div style="width:48px;height:48px;border-radius:50%;border:3px solid rgba(16,185,129,0.2);border-top-color:#10B981;animation:spin 1s linear infinite;margin:0 auto 20px;"></div><div style="color:#C8C3BE;font-size:16px;font-weight:600;">Analyzing...</div></div>';
+  el.innerHTML='<div style="text-align:center;padding-top:80px;"><div style="width:48px;height:48px;border-radius:50%;border:3px solid rgba(255,87,51,0.2);border-top-color:#FF5733;animation:spin 1s linear infinite;margin:0 auto 20px;"></div><div style="color:#C8C3BE;font-size:16px;font-weight:600;">Analyzing...</div></div>';
   const cfg=getCfg();let s;
   try{
     const txt=interviews.map((iv,i)=>'=== S'+(i+1)+' ('+fmtT(iv.duration)+') ===\n'+iv.transcript.map(m=>(m.role==='user'?'USER':'AI')+': '+m.text).join('\n')).join('\n\n');
@@ -590,15 +590,15 @@ async function doSynth(){
 
 function renderSynth(s,cfg){
   const el=document.getElementById('phase-synthesis');
-  const sentBg=t=>t==='negative'?'rgba(16,185,129,0.15)':t==='positive'?'rgba(76,175,80,0.15)':'rgba(255,193,7,0.15)';
-  const sentCol=t=>t==='negative'?'#10B981':t==='positive'?'#4CAF50':'#FFC107';
+  const sentBg=t=>t==='negative'?'rgba(255,87,51,0.15)':t==='positive'?'rgba(76,175,80,0.15)':'rgba(255,193,7,0.15)';
+  const sentCol=t=>t==='negative'?'#FF5733':t==='positive'?'#4CAF50':'#FFC107';
   el.innerHTML='<div style="margin-bottom:28px;"><div class="badge" style="background:rgba(156,39,176,0.12);color:#CE93D8;margin-bottom:16px;">AI Synthesis</div><h1 class="serif" style="font-size:28px;font-weight:700;margin-bottom:8px;">Research Findings</h1><p style="color:#8A8580;font-size:14px;">'+(cfg.projectName||'Project')+' · '+interviews.length+' session'+(interviews.length!==1?'s':'')+'</p></div>'+
-    (s.summary?'<div style="padding:16px;border-radius:14px;margin-bottom:24px;background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(156,39,176,0.06));border:1px solid rgba(16,185,129,0.12);"><div style="color:#34D399;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Executive Summary</div><p style="color:#E0DBD6;font-size:14px;line-height:1.7;">'+s.summary+'</p></div>':'')+
+    (s.summary?'<div style="padding:16px;border-radius:14px;margin-bottom:24px;background:linear-gradient(135deg,rgba(255,87,51,0.08),rgba(156,39,176,0.06));border:1px solid rgba(255,87,51,0.12);"><div style="color:#FF8A65;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Executive Summary</div><p style="color:#E0DBD6;font-size:14px;line-height:1.7;">'+s.summary+'</p></div>':'')+
     '<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Key Themes</h2>'+
     s.themes.map(t=>'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;"><span style="color:#F5F0EB;font-weight:600;">'+t.label+'</span><div style="display:flex;gap:6px;"><span style="font-size:11px;padding:3px 10px;border-radius:10px;font-weight:600;background:'+sentBg(t.sentiment)+';color:'+sentCol(t.sentiment)+';">'+t.sentiment+'</span><span class="mono" style="color:#5A5550;font-size:11px;">'+t.frequency+'</span></div></div><p style="color:#8A8580;font-size:13px;line-height:1.6;">'+t.insight+'</p></div>').join('')+
-    '<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Recommendations</h2><div style="padding:16px;border-radius:14px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.12);">'+
-    s.recommendations.map((r,i)=>'<div style="display:flex;gap:10px;padding:10px 0;'+(i<s.recommendations.length-1?'border-bottom:1px solid rgba(255,255,255,0.04);':'')+'"><span class="mono" style="color:#10B981;font-weight:700;font-size:13px;min-width:24px;">'+String(i+1).padStart(2,'0')+'</span><span style="color:#C8C3BE;font-size:14px;line-height:1.5;">'+r+'</span></div>').join('')+'</div>'+
-    (s.quotes?.length?'<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Notable Quotes</h2>'+s.quotes.map(q=>'<div style="padding:14px 16px;border-radius:14px;margin-bottom:8px;background:rgba(255,255,255,0.03);border-left:3px solid #10B981;"><p style="color:#C8C3BE;font-size:14px;line-height:1.6;font-style:italic;margin-bottom:6px;">&ldquo;'+q.text+'&rdquo;</p><span style="color:#5A5550;font-size:12px;">— Session '+q.session+'</span></div>').join(''):'')+
+    '<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Recommendations</h2><div style="padding:16px;border-radius:14px;background:rgba(255,87,51,0.06);border:1px solid rgba(255,87,51,0.12);">'+
+    s.recommendations.map((r,i)=>'<div style="display:flex;gap:10px;padding:10px 0;'+(i<s.recommendations.length-1?'border-bottom:1px solid rgba(255,255,255,0.04);':'')+'"><span class="mono" style="color:#FF5733;font-weight:700;font-size:13px;min-width:24px;">'+String(i+1).padStart(2,'0')+'</span><span style="color:#C8C3BE;font-size:14px;line-height:1.5;">'+r+'</span></div>').join('')+'</div>'+
+    (s.quotes?.length?'<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Notable Quotes</h2>'+s.quotes.map(q=>'<div style="padding:14px 16px;border-radius:14px;margin-bottom:8px;background:rgba(255,255,255,0.03);border-left:3px solid #FF5733;"><p style="color:#C8C3BE;font-size:14px;line-height:1.6;font-style:italic;margin-bottom:6px;">&ldquo;'+q.text+'&rdquo;</p><span style="color:#5A5550;font-size:12px;">— Session '+q.session+'</span></div>').join(''):'')+
     '<button onclick="showPhase(\'review\')" style="width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#C8C3BE;font-size:14px;font-weight:600;cursor:pointer;margin-top:24px;">← Back</button>';
 }
 
@@ -609,12 +609,12 @@ function renderLangs(){
   Object.entries(LANG_CONFIG).forEach(([key,cfg])=>{
     const b=document.createElement('button');
     const isActive=key===selectedLang;
-    b.style.cssText='padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.2s;display:flex;align-items:center;gap:8px;'+(isActive?'background:linear-gradient(135deg,#10B981,#34D399);color:#FFF;box-shadow:0 4px 15px rgba(16,185,129,0.3);':'background:rgba(255,255,255,0.06);color:#8A8580;');
+    b.style.cssText='padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.2s;display:flex;align-items:center;gap:8px;'+(isActive?'background:linear-gradient(135deg,#FF5733,#FF8A65);color:#FFF;box-shadow:0 4px 15px rgba(255,87,51,0.3);':'background:rgba(255,255,255,0.06);color:#8A8580;');
     b.innerHTML=cfg.flag+' '+cfg.label;
     b.onclick=()=>{
       selectedLang=key;
       el.querySelectorAll('button').forEach(x=>{x.style.background='rgba(255,255,255,0.06)';x.style.color='#8A8580';x.style.boxShadow='none';});
-      b.style.background='linear-gradient(135deg,#10B981,#34D399)';b.style.color='#FFF';b.style.boxShadow='0 4px 15px rgba(16,185,129,0.3)';
+      b.style.background='linear-gradient(135deg,#FF5733,#FF8A65)';b.style.color='#FFF';b.style.boxShadow='0 4px 15px rgba(255,87,51,0.3)';
       applyLangDirection();
     };
     el.appendChild(b);
@@ -654,7 +654,7 @@ function applyLangDirection(){
   const ui=document.getElementById('user-input');
   if(ui){ui.dir=dir;ui.placeholder=isAr?'اكتب إجابتك...':'Type your answer...';}
 }
-function renderTones(){const el=document.getElementById('tone-buttons');['Casual & Friendly','Professional','Deep & Probing'].forEach(t=>{const b=document.createElement('button');b.style.cssText='padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.2s;'+(t===selectedTone?'background:linear-gradient(135deg,#10B981,#34D399);color:#FFF;box-shadow:0 4px 15px rgba(16,185,129,0.3);':'background:rgba(255,255,255,0.06);color:#8A8580;');b.textContent=t;b.onclick=()=>{selectedTone=t;el.querySelectorAll('button').forEach(x=>{x.style.background='rgba(255,255,255,0.06)';x.style.color='#8A8580';x.style.boxShadow='none';});b.style.background='linear-gradient(135deg,#10B981,#34D399)';b.style.color='#FFF';b.style.boxShadow='0 4px 15px rgba(16,185,129,0.3)';};el.appendChild(b);});}
+function renderTones(){const el=document.getElementById('tone-buttons');['Casual & Friendly','Professional','Deep & Probing'].forEach(t=>{const b=document.createElement('button');b.style.cssText='padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.2s;'+(t===selectedTone?'background:linear-gradient(135deg,#FF5733,#FF8A65);color:#FFF;box-shadow:0 4px 15px rgba(255,87,51,0.3);':'background:rgba(255,255,255,0.06);color:#8A8580;');b.textContent=t;b.onclick=()=>{selectedTone=t;el.querySelectorAll('button').forEach(x=>{x.style.background='rgba(255,255,255,0.06)';x.style.color='#8A8580';x.style.boxShadow='none';});b.style.background='linear-gradient(135deg,#FF5733,#FF8A65)';b.style.color='#FFF';b.style.boxShadow='0 4px 15px rgba(255,87,51,0.3)';};el.appendChild(b);});}
 function getCfg(){return{projectName:document.getElementById('project-name').value.trim(),objective:document.getElementById('objective').value.trim(),cohort:document.getElementById('cohort').value.trim(),tone:selectedTone,questions:[...questions]};}
 function fmtT(s){return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');}
 
