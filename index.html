@@ -227,7 +227,7 @@ const LANG_CONFIG = {
     label: 'مصري',
     flag: '🇪🇬',
     voiceId: 'XB0fDUnXU5powFXDhCwa', // Charlotte — ElevenLabs multilingual female, works great with Arabic
-    transcriber: { provider: 'deepgram', model: 'nova-2', language: 'ar' },
+    transcriber: { provider: 'deepgram', model: 'nova-2', language: 'multi' },
     systemLang: 'You MUST respond ONLY in Egyptian Arabic (العامية المصرية). Never use English. Use casual Egyptian dialect, not Modern Standard Arabic.',
   }
 };
@@ -267,7 +267,7 @@ async function loadCustomScript(){
   document.getElementById('add-q-wrap').classList.add('hidden');
 
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,
         messages:[{role:'user',content:`You are parsing a user-provided interview script into structured question groups.
 
@@ -346,7 +346,7 @@ async function genScript(){
   document.getElementById('script-card').classList.add('hidden');
   document.getElementById('add-q-wrap').classList.add('hidden');
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,
         messages:[{role:'user',content:`You are an expert user researcher designing an interview script.
 
@@ -541,7 +541,7 @@ async function sendMsg(){
     isThinking=true;document.getElementById('send-btn').style.opacity='0.5';showTB();
     try{
       const cfg=getCfg();
-      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
           messages:[{role:'user',content:'You are a user researcher. Style: '+cfg.tone+'. Objective: '+cfg.objective+'. Questions: '+cfg.questions.join('; ')+'\n\nInterviewee said: "'+t+'"\n\nRespond as interviewer, 1-3 sentences. Plain text.'}]})});
       const d=await r.json();hideTB();addTM('assistant',d.content?.[0]?.text||'Tell me more?');
@@ -580,7 +580,7 @@ async function doSynth(){
   const cfg=getCfg();let s;
   try{
     const txt=interviews.map((iv,i)=>'=== S'+(i+1)+' ('+fmtT(iv.duration)+') ===\n'+iv.transcript.map(m=>(m.role==='user'?'USER':'AI')+': '+m.text).join('\n')).join('\n\n');
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
         messages:[{role:'user',content:'Senior researcher.\n\nOBJ: '+cfg.objective+'\nCOHORT: '+cfg.cohort+'\n\nTRANSCRIPTS:\n'+txt+'\n\nJSON only:\n{"themes":[{"label":"T","sentiment":"positive|negative|mixed","frequency":"X of Y","insight":"S"}],"recommendations":["R"],"quotes":[{"text":"Q","session":1,"context":"C"}],"summary":"S"}\n\n2-4 themes, 3-5 recs, 2-4 quotes.'}]})});
     const d=await r.json();s=JSON.parse((d.content?.map(b=>b.text||'').join('')||'').replace(/```json|```/g,'').trim());
