@@ -47,13 +47,13 @@
     .step-line { flex: 1; height: 2px; background: rgba(255,255,255,0.08); margin: 0 8px; transition: background 0.3s; }
     .step-line.active { background: linear-gradient(90deg, #FF5733, #FF8A65); }
     .step-labels { display: flex; justify-content: space-between; margin-bottom: 32px; }
-    .step-label { font-size: 12px; font-weight: 500; color: #5A5550; transition: color 0.3s; text-align: center; width: 33.33%; }
+    .step-label { font-size: 12px; font-weight: 500; color: #5A5550; transition: color 0.3s; text-align: center; width: 25%; }
     .step-label.active { color: #FF5733; font-weight: 600; }
     /* Wizard Actions */
     .wizard-actions { display: flex; align-items: center; gap: 12px; margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
     .wizard-actions .spacer { flex: 1; }
     .btn-back { padding: 12px 24px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: #C8C3BE; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .btn-next { padding: 12px 24px; border-radius: 10px; border: none; background: linear-gradient(135deg, #10B981, #34D399); color: #FFF; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+    .btn-next { padding: 12px 24px; border-radius: 10px; border: none; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(255,87,51,0.3); }
     .btn-next:disabled { background: rgba(255,255,255,0.08); color: #5A5550; box-shadow: none; cursor: default; }
     /* Script Card */
     .script-card { border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
@@ -71,6 +71,8 @@
     /* RTL auto-detect */
     .input, .script-text, .script-edit-input, .msg-bubble { unicode-bidi: plaintext; }
     [dir="rtl"] .script-title { text-align: right; }
+    #user-table-wrap::-webkit-scrollbar { width: 3px; } #user-table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+    #upload-zone:hover { border-color: rgba(255,87,51,0.3) !important; background: rgba(255,87,51,0.02); }
     /* Theme groups */
     .theme-group { margin-bottom: 2px; }
     .theme-header { display: flex; align-items: center; gap: 10px; padding: 14px 20px; background: rgba(255,87,51,0.04); border-bottom: 1px solid rgba(255,255,255,0.04); }
@@ -99,11 +101,14 @@
       <div class="step-circle" id="sc2">2</div>
       <div class="step-line" id="sl2"></div>
       <div class="step-circle" id="sc3">3</div>
+      <div class="step-line" id="sl3"></div>
+      <div class="step-circle" id="sc4">4</div>
     </div>
     <div class="step-labels">
       <span class="step-label active" id="slab1">Objective</span>
       <span class="step-label" id="slab2">Script</span>
-      <span class="step-label" id="slab3">Settings</span>
+      <span class="step-label" id="slab3">Users</span>
+      <span class="step-label" id="slab4">Settings</span>
     </div>
 
     <!-- STEP 1 -->
@@ -153,8 +158,51 @@
       <div class="wizard-actions"><button class="btn-back" onclick="goStep(1)">← Back</button><div class="spacer"></div><button class="btn-next" id="s2next" onclick="goStep(3)">Next →</button></div>
     </div>
 
-    <!-- STEP 3 -->
+    <!-- STEP 3: User List -->
     <div id="ws3" class="hidden">
+      <h2 class="serif" style="font-size:26px;font-weight:700;margin-bottom:8px;">User List</h2>
+      <p style="color:#8A8580;font-size:13px;margin-bottom:20px;line-height:1.5;">Upload an Excel sheet with the users to interview. The intro message will be personalized with each user's name.</p>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:6px;">Upload Excel File</h3>
+        <p style="color:#5A5550;font-size:12px;line-height:1.5;margin-bottom:14px;">Required columns: <strong style="color:#C8C3BE;">Name</strong> and <strong style="color:#C8C3BE;">Phone</strong>. Optional: Email, Segment, Notes.</p>
+        <div id="upload-zone" style="border:2px dashed rgba(255,255,255,0.1);border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:all 0.3s;" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.style.borderColor='#FF5733';this.style.background='rgba(255,87,51,0.05)'" ondragleave="this.style.borderColor='rgba(255,255,255,0.1)';this.style.background='transparent'" ondrop="event.preventDefault();this.style.borderColor='rgba(255,255,255,0.1)';this.style.background='transparent';handleFileUpload(event.dataTransfer.files[0])">
+          <div id="upload-icon" style="font-size:32px;margin-bottom:8px;">📁</div>
+          <div id="upload-label" style="color:#8A8580;font-size:14px;font-weight:500;">Drop .xlsx or .csv here, or click to browse</div>
+          <div id="upload-sublabel" style="color:#5A5550;font-size:12px;margin-top:4px;"></div>
+          <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFileUpload(this.files[0])">
+        </div>
+      </div>
+
+      <div id="user-list-preview" class="hidden" style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <label class="label" style="margin-bottom:0;">Preview</label>
+          <button onclick="clearUserList()" style="background:none;border:none;color:#FF5733;font-size:12px;font-weight:600;cursor:pointer;">Clear ×</button>
+        </div>
+        <div id="user-table-wrap" style="max-height:200px;overflow-y:auto;border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
+          <table id="user-table" style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead id="user-table-head" style="background:rgba(255,255,255,0.04);position:sticky;top:0;"></thead>
+            <tbody id="user-table-body"></tbody>
+          </table>
+        </div>
+        <div id="user-count" style="color:#5A5550;font-size:12px;margin-top:8px;"></div>
+      </div>
+
+      <div id="name-placeholder-hint" class="hidden card" style="background:rgba(255,87,51,0.04);border-color:rgba(255,87,51,0.15);">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <span style="font-size:18px;">💡</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#C8C3BE;margin-bottom:4px;">Personalized intro detected</div>
+            <div id="placeholder-preview" style="font-size:12px;color:#8A8580;line-height:1.5;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-actions"><button class="btn-back" onclick="goStep(2)">← Back</button><div class="spacer"></div><button class="btn-next" onclick="goStep(4)">Skip →</button><button class="btn-next" id="s3next" onclick="goStep(4)" style="display:none;">Next →</button></div>
+    </div>
+
+    <!-- STEP 4: Settings -->
+    <div id="ws4" class="hidden">
       <h2 class="serif" style="font-size:26px;font-weight:700;margin-bottom:24px;">Interview Settings</h2>
 
       <div class="card" style="margin-bottom:24px;">
@@ -168,7 +216,7 @@
       </div>
       <div style="margin-bottom:24px;"><label class="label">Interview Style</label><div style="display:flex;gap:10px;flex-wrap:wrap;" id="tone-buttons"></div></div>
       <div style="margin-bottom:24px;"><label class="label">Project Name (optional)</label><input id="project-name" class="input" placeholder="e.g., Onboarding Flow Research"></div>
-      <div class="wizard-actions"><button class="btn-back" onclick="goStep(2)">← Back</button><div class="spacer"></div><button class="btn-next" id="start-btn" onclick="startInterview()">Start Interview →</button></div>
+      <div class="wizard-actions"><button class="btn-back" onclick="goStep(3)">← Back</button><div class="spacer"></div><button class="btn-next" id="start-btn" onclick="startInterview()">Start Interview →</button></div>
     </div>
   </div>
 
@@ -213,6 +261,8 @@ let timerInterval=null, duration=0, transcriptData=[], interviews=[], selectedTo
 let scriptIntro='', scriptOutro='', questions=[], editIdx=null;
 let scriptGroups=[]; // [{theme:'...', icon:'🔍', questions:['...'], flow:'...'}]
 let selectedLang='en'; // 'en' or 'ar-eg'
+let userList=[]; // [{name:'...', phone:'...', email:'...', ...}]
+let userListColumns=[]; // column headers from uploaded file
 
 // Language configs
 const LANG_CONFIG = {
@@ -377,9 +427,13 @@ async function goStep(s){
     if(hasCustomScript()) await loadCustomScript();
     else await genScript();
   }
+  if(s===3&&wizStep===2){
+    // Check for name placeholders in intro to show hint
+    checkNamePlaceholder();
+  }
   wizStep=s;
-  for(let i=1;i<=3;i++)document.getElementById('ws'+i).classList[i===s?'remove':'add']('hidden');
-  for(let i=1;i<=3;i++){
+  for(let i=1;i<=4;i++)document.getElementById('ws'+i).classList[i===s?'remove':'add']('hidden');
+  for(let i=1;i<=4;i++){
     const c=document.getElementById('sc'+i),l=document.getElementById('slab'+i);
     c.classList.remove('active','done');l.classList.remove('active');
     if(i===s){c.classList.add('active');l.classList.add('active');c.innerHTML=i;}
@@ -388,6 +442,7 @@ async function goStep(s){
   }
   document.getElementById('sl1').classList[s>1?'add':'remove']('active');
   document.getElementById('sl2').classList[s>2?'add':'remove']('active');
+  document.getElementById('sl3').classList[s>3?'add':'remove']('active');
 }
 
 // ═══ AI SCRIPT GENERATION ═══
@@ -516,6 +571,148 @@ function addQ(){
 }
 
 // ═══ MODE ═══
+// ═══ USER LIST ═══
+function handleFileUpload(file){
+  if(!file)return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(!['xlsx','xls','csv'].includes(ext)){
+    document.getElementById('upload-sublabel').textContent='Please upload .xlsx, .xls, or .csv';
+    document.getElementById('upload-sublabel').style.color='#FF5733';
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      if(ext==='csv'){
+        parseCSV(e.target.result, file.name);
+      }else{
+        // For xlsx, parse manually with simple approach
+        parseXLSX(e.target.result, file.name);
+      }
+    }catch(err){
+      console.error('[VoxR] File parse error:',err);
+      document.getElementById('upload-sublabel').textContent='Error reading file. Try CSV format.';
+      document.getElementById('upload-sublabel').style.color='#FF5733';
+    }
+  };
+  if(ext==='csv') reader.readAsText(file);
+  else reader.readAsArrayBuffer(file);
+}
+
+function parseCSV(text, fname){
+  const lines=text.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2){document.getElementById('upload-sublabel').textContent='File appears empty';return;}
+  const headers=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
+  const rows=[];
+  for(let i=1;i<lines.length;i++){
+    const vals=lines[i].split(',').map(v=>v.trim().replace(/^"|"$/g,''));
+    if(vals.length>=2 && vals.some(v=>v)){
+      const row={};
+      headers.forEach((h,j)=>row[h]=vals[j]||'');
+      rows.push(row);
+    }
+  }
+  processUserData(headers, rows, fname);
+}
+
+function parseXLSX(buffer, fname){
+  // Minimal XLSX parsing — extract shared strings and sheet data
+  // For production, use SheetJS. Here we try a basic approach.
+  // Convert to base64 and use a simple parser
+  try{
+    const arr=new Uint8Array(buffer);
+    // Try to find CSV-like content in the XLSX
+    // This is a demo — for real usage, include SheetJS
+    const text=new TextDecoder('utf-8',{fatal:false}).decode(arr);
+    if(text.includes(',')&&text.includes('\n')){
+      parseCSV(text, fname);return;
+    }
+    document.getElementById('upload-sublabel').innerHTML='For the demo, please use <strong>.csv</strong> format';
+    document.getElementById('upload-sublabel').style.color='#FFC107';
+  }catch(e){
+    document.getElementById('upload-sublabel').innerHTML='For the demo, please use <strong>.csv</strong> format';
+    document.getElementById('upload-sublabel').style.color='#FFC107';
+  }
+}
+
+function processUserData(headers, rows, fname){
+  // Normalize column names — find Name and Phone columns
+  const nameCol=headers.find(h=>/^(name|اسم|user.?name|الاسم|full.?name)/i.test(h));
+  const phoneCol=headers.find(h=>/^(phone|هاتف|mobile|رقم|tel|number|phone.?number)/i.test(h));
+  if(!nameCol){
+    document.getElementById('upload-sublabel').textContent='Could not find a "Name" column. Please include a Name header.';
+    document.getElementById('upload-sublabel').style.color='#FF5733';
+    return;
+  }
+  userListColumns=headers;
+  userList=rows.map(r=>({...r, _name:r[nameCol]||'', _phone:r[phoneCol]||''}));
+
+  // Update UI
+  document.getElementById('upload-icon').textContent='✅';
+  document.getElementById('upload-label').textContent=fname;
+  document.getElementById('upload-sublabel').textContent=userList.length+' users loaded';
+  document.getElementById('upload-sublabel').style.color='#4CAF50';
+
+  // Show preview table
+  const preview=document.getElementById('user-list-preview');
+  preview.classList.remove('hidden');
+  const thead=document.getElementById('user-table-head');
+  const tbody=document.getElementById('user-table-body');
+  thead.innerHTML='<tr>'+headers.map(h=>'<th style="padding:8px 12px;text-align:left;color:#8A8580;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.06);">'+h+'</th>').join('')+'</tr>';
+  tbody.innerHTML=userList.slice(0,10).map(u=>'<tr>'+headers.map(h=>'<td style="padding:6px 12px;color:#C8C3BE;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03);">'+(u[h]||'—')+'</td>').join('')+'</tr>').join('');
+  document.getElementById('user-count').textContent=userList.length+' users total'+(userList.length>10?' (showing first 10)':'');
+
+  // Show Next instead of Skip, hide Skip
+  const actions=document.getElementById('ws3').querySelector('.wizard-actions');
+  const skipBtn=actions.querySelectorAll('.btn-next')[0];
+  const nextBtn=document.getElementById('s3next');
+  if(skipBtn&&nextBtn){skipBtn.style.display='none';nextBtn.style.display='inline-block';}
+
+  checkNamePlaceholder();
+}
+
+function clearUserList(){
+  userList=[];userListColumns=[];
+  document.getElementById('upload-icon').textContent='📁';
+  document.getElementById('upload-label').textContent='Drop .xlsx or .csv here, or click to browse';
+  document.getElementById('upload-sublabel').textContent='';
+  document.getElementById('user-list-preview').classList.add('hidden');
+  document.getElementById('name-placeholder-hint').classList.add('hidden');
+  document.getElementById('file-input').value='';
+  // Show Skip, hide Next
+  const actions=document.getElementById('ws3').querySelector('.wizard-actions');
+  const skipBtn=actions.querySelectorAll('.btn-next')[0];
+  const nextBtn=document.getElementById('s3next');
+  if(skipBtn&&nextBtn){skipBtn.style.display='inline-block';nextBtn.style.display='none';}
+}
+
+function checkNamePlaceholder(){
+  // Check if intro contains a name placeholder like [اسم المستخدم] or [user name] or [name]
+  const placeholderRegex=/\[(اسم المستخدم|user.?name|name|الاسم)\]/i;
+  const hasPlaceholder=placeholderRegex.test(scriptIntro);
+  const hint=document.getElementById('name-placeholder-hint');
+  if(hasPlaceholder&&userList.length>0){
+    hint.classList.remove('hidden');
+    const firstName=userList[0]._name;
+    const preview=scriptIntro.replace(placeholderRegex, '<strong style="color:#FF5733;">'+firstName+'</strong>');
+    document.getElementById('placeholder-preview').innerHTML='Example for first user: <br><span dir="rtl" style="display:inline-block;">'+preview+'</span>';
+  }else if(hasPlaceholder&&userList.length===0){
+    hint.classList.remove('hidden');
+    document.getElementById('placeholder-preview').innerHTML='Your intro uses <strong style="color:#FF5733;">[name placeholder]</strong> — upload a user list to personalize it.';
+  }else{
+    hint.classList.add('hidden');
+  }
+}
+
+function getPersonalizedIntro(userName){
+  const placeholderRegex=/\[(اسم المستخدم|user.?name|name|الاسم)\]/i;
+  if(userName&&placeholderRegex.test(scriptIntro)){
+    return scriptIntro.replace(placeholderRegex, userName);
+  }
+  return scriptIntro;
+}
+
+// ═══ SETTINGS ═══
 function updateMode(){
   const key=document.getElementById('vapi-key').value.trim();isVoiceMode=key.length>10;
   const b=document.getElementById('mode-badge'),st=document.getElementById('mode-status'),h=document.getElementById('mode-hint');
@@ -558,12 +755,61 @@ function startInterview(){
     setLS('connecting');
     const lang=LANG_CONFIG[selectedLang];
     const groupScript=scriptGroups.map(g=>`\n[${g.theme}] (${g.flow||'ask in order'})\n${g.questions.map((q,i)=>'  '+(i+1)+'. '+q).join('\n')}`).join('\n');
-    const sp=`You are a skilled user researcher. Style: ${cfg.tone}.\n${lang.systemLang}\n\nOBJECTIVE: ${cfg.objective}\nCOHORT: ${cfg.cohort}\n\nSCRIPT:\nIntro: ${scriptIntro}\n${groupScript}\nOutro: ${scriptOutro}\n\nINSTRUCTIONS:\n- Start with intro, then work through each theme group\n- Within each group, follow the flow guidance (e.g. if it says "ask Q2 only if they say yes", respect that)\n- Listen carefully, ask follow-ups based on what user actually says\n- Reference what user said — don't just read questions robotically\n- Keep natural and conversational, under 10 min\n- Close with outro`;
+    const sp=`You are a world-class qualitative user researcher conducting a live voice interview. Your style is: ${cfg.tone}.
+
+${lang.systemLang}
+
+RESEARCH OBJECTIVE: ${cfg.objective}
+TARGET COHORT: ${cfg.cohort}
+
+INTERVIEW SCRIPT (use as a GUIDE, not a checklist):
+Intro: ${scriptIntro}
+${groupScript}
+Outro: ${scriptOutro}
+
+═══ CORE BEHAVIOR: ACTIVE LISTENING ═══
+
+You are having a REAL CONVERSATION, not reading a survey. Your #1 job is to make the participant feel heard and to extract deep, rich insights.
+
+ALWAYS do this after the participant speaks:
+1. ACKNOWLEDGE what they said — reflect back the key point in your own words ("So it sounds like..." / "Interesting, so you're saying..." / "يعني لو فهمتك صح...")
+2. DIG DEEPER if their answer is vague or surface-level — ask "why?", "can you give me an example?", "what happened specifically?", "tell me more about that"
+3. ONLY THEN decide whether to move to the next question or stay on this thread
+
+NEVER do this:
+- Never jump to the next question without acknowledging what they just said
+- Never ask a question that was already answered by something they said earlier
+- Never ask 2 questions at once
+- Never move on if they gave a one-word answer — probe deeper first
+- Never ignore emotional cues (frustration, excitement, confusion) — name them and explore
+- Never read questions word-for-word from the script — paraphrase naturally
+
+═══ SILENCE HANDLING ═══
+If the participant is silent for a few seconds, don't just ask the next question. Instead:
+- Gently prompt: "Take your time..." / "خد وقتك..." 
+- Or rephrase: "Maybe I can put it differently..." / "يعني ممكن أسأل بطريقة تانية..."
+- If still silent, offer an easier entry: "For example, some people say X — does that resonate?" / "مثلاً في ناس بتقول كذا، ده بيحصل معاك؟"
+
+═══ FLOW CONTROL ═══
+- The script questions are your GUIDE, not your prison. Skip questions already answered. Add follow-ups that feel natural.
+- Spend more time on themes where the participant has rich things to say. Rush through themes where they clearly have nothing to add.
+- If they bring up something unexpected but relevant to the research objective, FOLLOW THAT THREAD — it's gold.
+- Transitions between themes should feel natural: "That's really helpful. Shifting gears a bit..." / "جميل جداً. طيب خليني أسألك حاجة تانية..."
+
+═══ CONVERSATION STYLE ═══
+- Keep responses SHORT (1-2 sentences of acknowledgment + 1 question). This is a conversation, not a lecture.
+- Use their exact words when reflecting back — it shows you're listening.
+- Sound genuinely curious, not clinical.
+- Match their energy — if they're animated, be animated. If they're thoughtful, be thoughtful.
+- End with the outro when you've covered the key themes (you don't need to ask every single question).
+
+Remember: A great interview feels like a great conversation. The participant should feel like talking to an interested friend, not filling out a form.`;
+    const personalIntro=userList.length>0?getPersonalizedIntro(userList[0]._name):scriptIntro;
     vapiInstance.start({
       model:{provider:"openai",model:"gpt-4o",messages:[{role:"system",content:sp}],temperature:0.7},
       voice:lang.voice,
       transcriber:lang.transcriber,
-      name:cfg.projectName||"Interview",firstMessage:scriptIntro,silenceTimeoutSeconds:30,maxDurationSeconds:900,
+      name:cfg.projectName||"Interview",firstMessage:personalIntro,silenceTimeoutSeconds:45,maxDurationSeconds:900,
     }).catch(e=>{addTM('assistant','⚠️ '+( e?.message||JSON.stringify(e)));setLS('ended');});
     document.getElementById('pulse-core').classList.add('active');addPR();
   }else{
@@ -572,7 +818,8 @@ function startInterview(){
     document.getElementById('voice-badge').classList.add('hidden');
     document.getElementById('pulse-core').classList.add('active');
     setLS('live');addPR();
-    setTimeout(()=>addTM('assistant',scriptIntro||'Hi! Shall we get started?'),1200);
+    const demoIntro=userList.length>0?getPersonalizedIntro(userList[0]._name):scriptIntro;
+    setTimeout(()=>addTM('assistant',demoIntro||'Hi! Shall we get started?'),1200);
   }
 }
 
@@ -592,9 +839,31 @@ async function sendMsg(){
     isThinking=true;document.getElementById('send-btn').style.opacity='0.5';showTB();
     try{
       const cfg=getCfg();
+      const lang=LANG_CONFIG[selectedLang];
+      const groupScript=scriptGroups.map(g=>`[${g.theme}] ${g.questions.join(' / ')}`).join('\n');
+      // Build conversation history from transcript
+      const history=transcriptData.map(m=>m.role==='user'?`PARTICIPANT: "${m.text}"`:`INTERVIEWER: "${m.text}"`).join('\n');
       const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
-          messages:[{role:'user',content:'You are a user researcher. Style: '+cfg.tone+'. Objective: '+cfg.objective+'. Questions: '+cfg.questions.join('; ')+'\n\nInterviewee said: "'+t+'"\n\nRespond as interviewer, 1-3 sentences. Plain text.'}]})});
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,
+          messages:[{role:'user',content:`You are a skilled qualitative researcher in a live interview. Style: ${cfg.tone}.
+${lang.systemLang}
+
+OBJECTIVE: ${cfg.objective}
+SCRIPT GUIDE: ${groupScript}
+
+CONVERSATION SO FAR:
+${history}
+
+RULES:
+1. FIRST acknowledge/reflect what the participant just said (use their own words)
+2. If their answer was vague or short, probe deeper before moving on
+3. Only ask ONE question at a time
+4. Keep your response to 1-3 short sentences total
+5. Don't repeat questions already answered in the conversation
+6. Sound like a curious human, not a survey bot
+7. Plain text only, no markdown.
+
+Your next response as the interviewer:`}]})});
       const d=await r.json();hideTB();addTM('assistant',d.content?.[0]?.text||'Tell me more?');
     }catch(e){hideTB();addTM('assistant','Can you tell me more about that?');}
     finally{isThinking=false;document.getElementById('send-btn').style.opacity='1';}
