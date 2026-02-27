@@ -5,26 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0D0C0A">
-  <title>Interviewly — AI User Interviews</title>
+  <title>VoxR — AI User Interviews</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: linear-gradient(165deg, #1A1816 0%, #141210 50%, #0D0C0A 100%);
-      color: #F5F0EB; font-family: 'DM Sans', -apple-system, sans-serif;
-      min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
-    }
+    body { background: linear-gradient(165deg, #1A1816 0%, #141210 50%, #0D0C0A 100%); color: #F5F0EB; font-family: 'DM Sans', -apple-system, sans-serif; min-height: 100vh; min-height: 100dvh; overflow-x: hidden; }
     input, textarea, button { font-family: inherit; }
     input::placeholder, textarea::placeholder { color: #5A5550; }
     input:focus, textarea:focus { border-color: rgba(255,87,51,0.4) !important; outline: none; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
     @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
     @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes blink { 0%,20%{opacity:.2}50%{opacity:1}80%,100%{opacity:.2} }
-    .container { max-width: 480px; margin: 0 auto; padding: 20px 20px 40px; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+    .container { max-width: 520px; margin: 0 auto; padding: 20px 20px 40px; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
     .phase { animation: fade-up 0.6s ease-out; }
     .label { display: block; color: #8A8580; font-size: 12px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px; }
     .input { width: 100%; padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: #F5F0EB; font-size: 14px; }
@@ -36,11 +30,6 @@
     .msg-user { background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; border-bottom-right-radius: 4px; margin-left: auto; }
     .msg-ai { background: rgba(255,255,255,0.06); color: #C8C3BE; border-bottom-left-radius: 4px; }
     .msg-label { font-size: 10px; opacity: 0.5; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-    .tone-btn { padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
-    .tone-btn.active { background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; box-shadow: 0 4px 15px rgba(255,87,51,0.3); }
-    .tone-btn:not(.active) { background: rgba(255,255,255,0.06); color: #8A8580; }
-    .q-row { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
-    .add-btn { width: 44px; height: 44px; border-radius: 12px; border: none; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .pulse-outer { position: absolute; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,87,51,0.12); animation: pulse-ring 2s ease-out infinite; }
     .pulse-mid { position: absolute; width: 105px; height: 105px; border-radius: 50%; background: rgba(255,87,51,0.2); animation: pulse-ring 2s ease-out infinite 0.5s; }
     .pulse-vol { position: absolute; width: 85px; height: 85px; border-radius: 50%; background: rgba(255,87,51,0.15); transition: transform 0.15s ease-out; }
@@ -48,9 +37,37 @@
     .pulse-inner.active { background: linear-gradient(135deg, #FF5733, #FF8A65); box-shadow: 0 0 50px rgba(255,87,51,0.4); }
     .pulse-inner:not(.active) { background: linear-gradient(135deg, #2D2D2D, #4A4A4A); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
     .hidden { display: none !important; }
-    .thinking span { animation: blink 1.2s infinite; }
-    .thinking span:nth-child(2) { animation-delay: 0.2s; }
-    .thinking span:nth-child(3) { animation-delay: 0.4s; }
+    .thinking span { animation: blink 1.2s infinite; } .thinking span:nth-child(2) { animation-delay: 0.2s; } .thinking span:nth-child(3) { animation-delay: 0.4s; }
+    .add-btn { width: 44px; height: 44px; border-radius: 12px; border: none; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    /* Stepper */
+    .stepper { display: flex; align-items: center; margin-bottom: 10px; }
+    .step-circle { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; transition: all 0.3s; border: 2px solid rgba(255,255,255,0.1); color: #5A5550; background: transparent; }
+    .step-circle.active { background: linear-gradient(135deg, #FF5733, #FF8A65); border-color: transparent; color: #FFF; box-shadow: 0 4px 15px rgba(255,87,51,0.3); }
+    .step-circle.done { background: rgba(255,87,51,0.15); border-color: #FF5733; color: #FF5733; }
+    .step-line { flex: 1; height: 2px; background: rgba(255,255,255,0.08); margin: 0 8px; transition: background 0.3s; }
+    .step-line.active { background: linear-gradient(90deg, #FF5733, #FF8A65); }
+    .step-labels { display: flex; justify-content: space-between; margin-bottom: 32px; }
+    .step-label { font-size: 12px; font-weight: 500; color: #5A5550; transition: color 0.3s; text-align: center; width: 33.33%; }
+    .step-label.active { color: #FF5733; font-weight: 600; }
+    /* Wizard Actions */
+    .wizard-actions { display: flex; align-items: center; gap: 12px; margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .wizard-actions .spacer { flex: 1; }
+    .btn-back { padding: 12px 24px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: #C8C3BE; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-next { padding: 12px 24px; border-radius: 10px; border: none; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(255,87,51,0.3); }
+    .btn-next:disabled { background: rgba(255,255,255,0.08); color: #5A5550; box-shadow: none; cursor: default; }
+    /* Script Card */
+    .script-card { border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
+    .script-row { display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .script-row:last-child { border-bottom: none; }
+    .script-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; background: rgba(255,87,51,0.12); color: #FF5733; }
+    .script-content { flex: 1; min-width: 0; }
+    .script-title { font-size: 13px; font-weight: 600; color: #C8C3BE; margin-bottom: 4px; }
+    .script-text { font-size: 13px; color: #8A8580; line-height: 1.5; }
+    .script-edit { background: none; border: none; color: #5A5550; cursor: pointer; padding: 4px; border-radius: 6px; flex-shrink: 0; }
+    .script-edit:hover { color: #FF5733; }
+    .script-edit-input { width: 100%; padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,87,51,0.3); color: #F5F0EB; font-size: 13px; line-height: 1.5; margin-top: 4px; resize: vertical; min-height: 40px; font-family: inherit; }
+    .script-row-del { background: none; border: none; color: #5A5550; cursor: pointer; padding: 4px; font-size: 16px; line-height: 1; flex-shrink: 0; }
+    .script-row-del:hover { color: #FF5733; }
   </style>
 </head>
 <body>
@@ -58,58 +75,75 @@
   <!-- Top Bar -->
   <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 24px;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:28px;">
     <div style="display:flex;align-items:center;gap:10px;">
-      <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#FF5733,#FF8A65);display:flex;align-items:center;justify-content:center;font-size:16px;">🎙</div>
-      <span style="font-size:16px;font-weight:700;letter-spacing:-0.3px;">Interviewly</span>
+      <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#FF5733,#FF8A65);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#FFF;">V</div>
+      <span style="font-size:16px;font-weight:700;letter-spacing:-0.3px;">VoxR</span>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span id="mode-badge" style="font-size:10px;padding:3px 8px;border-radius:8px;background:rgba(255,193,7,0.12);color:#FFC107;font-weight:600;">DEMO</span>
-      <div style="display:flex;gap:4px;" id="progress-dots"></div>
-    </div>
+    <span id="mode-badge" style="font-size:10px;padding:3px 8px;border-radius:8px;background:rgba(255,193,7,0.12);color:#FFC107;font-weight:600;">DEMO</span>
   </div>
 
-  <!-- ═══ SETUP ═══ -->
+  <!-- ═══ SETUP WIZARD ═══ -->
   <div id="phase-setup" class="phase">
-    <div style="margin-bottom:32px;">
-      <div class="badge" style="background:rgba(255,87,51,0.12);color:#FF5733;margin-bottom:16px;">Research Design</div>
-      <h1 class="serif" style="font-size:32px;font-weight:700;line-height:1.2;margin-bottom:8px;">Plan Your Interview</h1>
-      <p style="color:#8A8580;font-size:15px;line-height:1.6;">Define your research goals. The AI will conduct the conversation.</p>
+    <div class="stepper" id="stepper">
+      <div class="step-circle active" id="sc1">1</div>
+      <div class="step-line" id="sl1"></div>
+      <div class="step-circle" id="sc2">2</div>
+      <div class="step-line" id="sl2"></div>
+      <div class="step-circle" id="sc3">3</div>
     </div>
-    <div class="card" style="margin-bottom:24px;">
-      <h3 style="font-size:15px;font-weight:600;margin-bottom:6px;">Voice Integration</h3>
-      <p style="color:#5A5550;font-size:13px;line-height:1.5;margin-bottom:14px;">Paste your Vapi public key for real voice interviews, or leave blank for text demo.</p>
-      <input id="vapi-key" class="input" type="password" placeholder="Vapi Public Key" oninput="updateMode()">
-      <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
-        <span id="mode-status" style="display:inline-flex;padding:4px 10px;border-radius:8px;background:rgba(255,193,7,0.12);color:#FFC107;font-size:12px;font-weight:600;">● Demo Mode</span>
-        <span id="mode-hint" style="color:#5A5550;font-size:11px;">Get a key free at vapi.ai</span>
+    <div class="step-labels">
+      <span class="step-label active" id="slab1">Objective</span>
+      <span class="step-label" id="slab2">Script</span>
+      <span class="step-label" id="slab3">Settings</span>
+    </div>
+
+    <!-- STEP 1 -->
+    <div id="ws1">
+      <h2 class="serif" style="font-size:26px;font-weight:700;margin-bottom:24px;">Define Your Objective</h2>
+      <div style="margin-bottom:24px;"><label class="label">Research Objective</label><textarea id="objective" class="input" style="min-height:100px;resize:vertical;" placeholder="What do you want to learn from this research? Describe your goals..."></textarea></div>
+      <div style="margin-bottom:24px;"><label class="label">Target Cohort</label><textarea id="cohort" class="input" style="min-height:80px;resize:vertical;" placeholder="Who are the participants? Age, location, role..."></textarea></div>
+      <div class="wizard-actions"><div class="spacer"></div><button class="btn-next" id="s1next" onclick="goStep(2)" disabled>Next →</button></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="ws2" class="hidden">
+      <h2 class="serif" style="font-size:26px;font-weight:700;margin-bottom:8px;">Script Preview</h2>
+      <p style="color:#8A8580;font-size:13px;margin-bottom:20px;line-height:1.5;">AI-recommended questions based on your objective. Click ✏️ to edit any item.</p>
+      <div id="script-loading" class="hidden" style="text-align:center;padding:40px 0;">
+        <div style="width:40px;height:40px;border-radius:50%;border:3px solid rgba(255,87,51,0.2);border-top-color:#FF5733;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+        <div style="color:#C8C3BE;font-size:14px;font-weight:500;">Generating interview script...</div>
+        <div style="color:#5A5550;font-size:12px;margin-top:4px;">Claude is crafting questions based on your objective</div>
       </div>
-    </div>
-    <div style="margin-bottom:24px;"><label class="label">Project Name</label><input id="project-name" class="input" placeholder="e.g., Onboarding Flow Research"></div>
-    <div style="margin-bottom:24px;"><label class="label">Research Objective</label><textarea id="objective" class="input" style="min-height:80px;resize:vertical;" placeholder="What do you want to learn?"></textarea></div>
-    <div style="margin-bottom:24px;"><label class="label">Target Cohort</label><input id="cohort" class="input" placeholder="e.g., New users from the last 30 days"></div>
-    <div style="margin-bottom:32px;">
-      <label class="label">Interview Style</label>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;" id="tone-buttons"></div>
-    </div>
-    <div style="margin-bottom:32px;">
-      <label class="label">Interview Questions</label>
-      <div id="questions-list" style="display:flex;flex-direction:column;gap:8px;"></div>
-      <div style="display:flex;gap:8px;margin-top:10px;">
-        <input id="new-question" class="input" style="flex:1;" placeholder="Add a question..." onkeydown="if(event.key==='Enter')addQuestion()">
-        <button class="add-btn" onclick="addQuestion()">+</button>
+      <div id="script-card" class="script-card"></div>
+      <div id="add-q-wrap" style="display:flex;gap:8px;margin-top:12px;">
+        <input id="add-q-in" class="input" style="flex:1;" placeholder="Add another question..." onkeydown="if(event.key==='Enter')addQ()">
+        <button class="add-btn" onclick="addQ()">+</button>
       </div>
+      <div class="wizard-actions"><button class="btn-back" onclick="goStep(1)">← Back</button><div class="spacer"></div><button class="btn-next" id="s2next" onclick="goStep(3)">Next →</button></div>
     </div>
-    <button id="start-btn" onclick="startInterview()" disabled style="width:100%;padding:16px 24px;border-radius:14px;border:none;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:0.5px;background:rgba(255,255,255,0.08);color:#5A5550;transition:all 0.3s;">Start Interview →</button>
+
+    <!-- STEP 3 -->
+    <div id="ws3" class="hidden">
+      <h2 class="serif" style="font-size:26px;font-weight:700;margin-bottom:24px;">Interview Settings</h2>
+      <div class="card" style="margin-bottom:24px;">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:6px;">Voice Integration</h3>
+        <p style="color:#5A5550;font-size:13px;line-height:1.5;margin-bottom:14px;">Paste your Vapi public key for real voice interviews, or leave blank for text demo.</p>
+        <input id="vapi-key" class="input" type="password" placeholder="Vapi Public Key" oninput="updateMode()">
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
+          <span id="mode-status" style="display:inline-flex;padding:4px 10px;border-radius:8px;background:rgba(255,193,7,0.12);color:#FFC107;font-size:12px;font-weight:600;">● Demo Mode</span>
+          <span id="mode-hint" style="color:#5A5550;font-size:11px;">Get a key free at vapi.ai</span>
+        </div>
+      </div>
+      <div style="margin-bottom:24px;"><label class="label">Interview Style</label><div style="display:flex;gap:10px;flex-wrap:wrap;" id="tone-buttons"></div></div>
+      <div style="margin-bottom:24px;"><label class="label">Project Name (optional)</label><input id="project-name" class="input" placeholder="e.g., Onboarding Flow Research"></div>
+      <div class="wizard-actions"><button class="btn-back" onclick="goStep(2)">← Back</button><div class="spacer"></div><button class="btn-next" id="start-btn" onclick="startInterview()">Start Interview →</button></div>
+    </div>
   </div>
 
   <!-- ═══ LIVE ═══ -->
   <div id="phase-live" class="phase hidden" style="flex:1;display:flex;flex-direction:column;">
     <div style="text-align:center;padding:10px 0 12px;position:sticky;top:0;z-index:10;background:linear-gradient(to bottom,#141210 80%,transparent);">
       <div style="position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center;margin:0 auto;" id="pulse-container">
-        <div class="pulse-inner" id="pulse-core">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/>
-          </svg>
-        </div>
+        <div class="pulse-inner" id="pulse-core"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg></div>
       </div>
       <div id="timer" class="mono" style="margin-top:14px;font-size:42px;font-weight:700;letter-spacing:-1px;">00:00</div>
       <div style="display:flex;justify-content:center;gap:8px;margin-top:6px;">
@@ -122,436 +156,246 @@
       <div id="transcript-empty" style="text-align:center;color:#3A3530;font-size:14px;margin-top:40px;">Waiting for conversation to begin...</div>
     </div>
     <div style="padding:12px 0 8px;position:sticky;bottom:0;z-index:10;background:linear-gradient(to top,#141210 80%,transparent);padding-top:20px;">
-      <div id="voice-active-hint" class="hidden" style="font-size:12px;color:#4CAF50;text-align:center;margin-bottom:10px;">
-        🎤 Speak naturally — the AI is listening and will respond by voice
-      </div>
+      <div id="voice-active-hint" class="hidden" style="font-size:12px;color:#4CAF50;text-align:center;margin-bottom:10px;">🎤 Speak naturally — the AI is listening</div>
       <div id="demo-input-wrapper">
-        <div id="demo-hint" style="font-size:11px;color:#5A5550;text-align:center;margin-bottom:8px;">Type your answers below</div>
+        <div style="font-size:11px;color:#5A5550;text-align:center;margin-bottom:8px;">Type your answers below</div>
         <div style="display:flex;gap:8px;margin-bottom:10px;">
-          <input id="user-input" class="input" style="flex:1;" placeholder="Type your answer..." onkeydown="if(event.key==='Enter'&&!isThinking)sendMessage()">
-          <button class="add-btn" style="border-radius:12px;" onclick="sendMessage()" id="send-btn">↑</button>
+          <input id="user-input" class="input" style="flex:1;" placeholder="Type your answer..." onkeydown="if(event.key==='Enter'&&!isThinking)sendMsg()">
+          <button class="add-btn" style="border-radius:12px;" onclick="sendMsg()" id="send-btn">↑</button>
         </div>
       </div>
       <button onclick="endInterview()" style="width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,87,51,0.3);background:rgba(255,87,51,0.08);color:#FF5733;font-size:14px;font-weight:600;cursor:pointer;">End Interview</button>
     </div>
   </div>
 
-  <!-- ═══ REVIEW ═══ -->
   <div id="phase-review" class="phase hidden"></div>
-
-  <!-- ═══ SYNTHESIS ═══ -->
   <div id="phase-synthesis" class="phase hidden"></div>
 </div>
 
-<!-- Vapi UMD bundle for browser script tag usage -->
 <script src="https://cdn.jsdelivr.net/gh/balacodeio/Vapi-Web-UMD@latest/dist/latest/vapi-web-bundle.min.js"></script>
-
 <script>
-// ─── State ──────────────────────────────────────────────────────
-let currentPhase = 'setup';
-let vapiInstance = null;
-let isVoiceMode = false;
-let isThinking = false;
-let timerInterval = null;
-let duration = 0;
-let transcriptData = [];
-let interviews = [];
-let selectedTone = 'Casual & Friendly';
-let questions = [
-  "Can you walk me through how you currently handle this problem?",
-  "What's the most frustrating part of your current workflow?",
-  "If you could wave a magic wand and fix one thing, what would it be?",
-  "How are you solving this today — any tools or workarounds?",
-  "What would make you switch to a new solution?",
-];
+// ═══ STATE ═══
+let currentPhase='setup', wizStep=1, vapiInstance=null, isVoiceMode=false, isThinking=false;
+let timerInterval=null, duration=0, transcriptData=[], interviews=[], selectedTone='Casual & Friendly';
+let scriptIntro='', scriptOutro='', questions=[], editIdx=null;
 
-// ─── Init ───────────────────────────────────────────────────────
-function init() {
-  renderToneButtons();
-  renderQuestions();
-  updateStartButton();
-  updateProgressDots();
-  document.getElementById('objective').addEventListener('input', updateStartButton);
-  console.log('[Interviewly] App initialized');
-  console.log('[Interviewly] Vapi available:', typeof Vapi !== 'undefined');
+// ═══ INIT ═══
+function init(){
+  renderTones();
+  document.getElementById('objective').addEventListener('input',()=>{document.getElementById('s1next').disabled=!document.getElementById('objective').value.trim()});
+  console.log('[VoxR] Init. Vapi:',typeof Vapi!=='undefined');
 }
 
-// ─── Mode ───────────────────────────────────────────────────────
-function updateMode() {
-  const key = document.getElementById('vapi-key').value.trim();
-  isVoiceMode = key.length > 10;
-  const badge = document.getElementById('mode-badge');
-  const status = document.getElementById('mode-status');
-  const hint = document.getElementById('mode-hint');
-
-  if (isVoiceMode) {
-    badge.style.background = 'rgba(76,175,80,0.12)'; badge.style.color = '#4CAF50'; badge.textContent = 'VOICE';
-    status.style.background = 'rgba(76,175,80,0.12)'; status.style.color = '#4CAF50'; status.textContent = '● Voice Ready';
-    hint.textContent = 'Real-time voice interviews enabled';
-
-    // Init Vapi with UMD bundle
-    try {
-      if (typeof Vapi !== 'undefined') {
-        vapiInstance = new Vapi(key);
-        setupVapiListeners();
-        console.log('[Interviewly] Vapi initialized successfully');
-      } else {
-        console.error('[Interviewly] Vapi class not found');
-        status.textContent = '● SDK Error';
-        status.style.color = '#FF5733';
-      }
-    } catch (e) {
-      console.error('[Interviewly] Vapi init error:', e);
-      status.textContent = '● Init Error';
-      status.style.color = '#FF5733';
-    }
-  } else {
-    badge.style.background = 'rgba(255,193,7,0.12)'; badge.style.color = '#FFC107'; badge.textContent = 'DEMO';
-    status.style.background = 'rgba(255,193,7,0.12)'; status.style.color = '#FFC107'; status.textContent = '● Demo Mode';
-    hint.textContent = 'Get a key free at vapi.ai';
-    vapiInstance = null;
+// ═══ WIZARD ═══
+async function goStep(s){
+  if(s===2&&wizStep===1){if(!document.getElementById('objective').value.trim())return;await genScript();}
+  wizStep=s;
+  for(let i=1;i<=3;i++)document.getElementById('ws'+i).classList[i===s?'remove':'add']('hidden');
+  for(let i=1;i<=3;i++){
+    const c=document.getElementById('sc'+i),l=document.getElementById('slab'+i);
+    c.classList.remove('active','done');l.classList.remove('active');
+    if(i===s){c.classList.add('active');l.classList.add('active');c.innerHTML=i;}
+    else if(i<s){c.classList.add('done');c.innerHTML='✓';}
+    else c.innerHTML=i;
   }
-  updateStartButton();
+  document.getElementById('sl1').classList[s>1?'add':'remove']('active');
+  document.getElementById('sl2').classList[s>2?'add':'remove']('active');
 }
 
-// ─── Vapi Events ────────────────────────────────────────────────
-function setupVapiListeners() {
-  if (!vapiInstance) return;
+// ═══ AI SCRIPT GENERATION ═══
+async function genScript(){
+  const obj=document.getElementById('objective').value.trim(),coh=document.getElementById('cohort').value.trim();
+  document.getElementById('script-loading').classList.remove('hidden');
+  document.getElementById('script-card').classList.add('hidden');
+  document.getElementById('add-q-wrap').classList.add('hidden');
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:`You are an expert user researcher. Generate an interview script.
 
-  vapiInstance.on('call-start', () => {
-    console.log('[Interviewly] Call started!');
-    setLiveStatus('live');
-    addPulseRings();
-    document.getElementById('pulse-core').classList.add('active');
-  });
+RESEARCH OBJECTIVE: ${obj}
+TARGET COHORT: ${coh||'General users'}
 
-  vapiInstance.on('call-end', () => {
-    console.log('[Interviewly] Call ended');
-    setLiveStatus('ended');
-    removePulseRings();
-    document.getElementById('pulse-core').classList.remove('active');
-  });
+Respond ONLY in JSON (no markdown, no backticks):
+{"intro":"Warm intro (1-2 sentences)","questions":["Q1","Q2","Q3","Q4","Q5"],"outro":"Thank you closing (1 sentence)"}
 
-  vapiInstance.on('speech-start', () => {
-    console.log('[Interviewly] AI speaking...');
-  });
-
-  vapiInstance.on('speech-end', () => {
-    console.log('[Interviewly] AI stopped speaking');
-  });
-
-  vapiInstance.on('volume-level', (vol) => {
-    const el = document.getElementById('pulse-vol');
-    if (el) el.style.transform = `scale(${1 + vol * 0.4})`;
-  });
-
-  vapiInstance.on('message', (message) => {
-    console.log('[Interviewly] Message:', message.type, message);
-    if (message.type === 'transcript' && message.transcriptType === 'final') {
-      addTranscriptMessage(message.role, message.transcript);
-    }
-  });
-
-  vapiInstance.on('error', (err) => {
-    console.error('[Interviewly] Vapi error:', err);
-    addTranscriptMessage('assistant', '⚠️ Voice error: ' + (err?.message || err?.error?.message || 'Connection issue. Check console.'));
-  });
+Generate exactly 5 focused open-ended questions that address the objective. Flow from broad to specific. Keep conversational.`}]})});
+    const d=await r.json(),t=d.content?.map(b=>b.text||'').join('')||'',p=JSON.parse(t.replace(/```json|```/g,'').trim());
+    scriptIntro=p.intro||'Hi! Thanks for chatting. This will take about 10 minutes.';
+    questions=p.questions||[];
+    scriptOutro=p.outro||'Thank you so much for your time!';
+  }catch(e){
+    console.error('[VoxR] Script gen error:',e);
+    scriptIntro='Hi! I\'m conducting research about '+obj.substring(0,60)+'. This will take about 10-15 minutes.';
+    questions=['Can you walk me through how you currently handle this?','What\'s the most frustrating part of your current workflow?','If you could wave a magic wand and fix one thing, what would it be?','How are you solving this today?','What would make you switch to a new solution?'];
+    scriptOutro='Thank you so much for your time!';
+  }
+  document.getElementById('script-loading').classList.add('hidden');
+  document.getElementById('script-card').classList.remove('hidden');
+  document.getElementById('add-q-wrap').classList.remove('hidden');
+  renderScript();
 }
 
-function setLiveStatus(state) {
-  const el = document.getElementById('live-status');
-  if (state === 'live') { el.textContent = '● LIVE'; el.style.background = 'rgba(76,175,80,0.15)'; el.style.color = '#4CAF50'; }
-  else if (state === 'connecting') { el.textContent = '● CONNECTING'; el.style.background = 'rgba(255,193,7,0.15)'; el.style.color = '#FFC107'; }
-  else { el.textContent = '● ENDED'; el.style.background = 'rgba(255,87,51,0.15)'; el.style.color = '#FF5733'; }
+function renderScript(){
+  const c=document.getElementById('script-card');
+  let h=sRow('I','Intro',scriptIntro,'intro');
+  questions.forEach((q,i)=>{h+=sRow('Q'+(i+1),'Question '+(i+1),q,'q-'+i,true);});
+  h+=sRow('O','Outro',scriptOutro,'outro');
+  c.innerHTML=h;
 }
 
-// ─── Interview Flow ─────────────────────────────────────────────
-function startInterview() {
-  transcriptData = [];
-  duration = 0;
-  showPhase('live');
+function sRow(badge,title,text,id,canDel){
+  if(editIdx===id) return `<div class="script-row"><div class="script-badge">${badge}</div><div class="script-content"><div class="script-title">${title}</div><textarea class="script-edit-input" id="ei-${id}">${text}</textarea><div style="display:flex;gap:6px;margin-top:6px;"><button onclick="saveE('${id}')" style="padding:5px 12px;border-radius:6px;border:none;background:#FF5733;color:#FFF;font-size:12px;font-weight:600;cursor:pointer;">Save</button><button onclick="cancelE()" style="padding:5px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#8A8580;font-size:12px;cursor:pointer;">Cancel</button></div></div></div>`;
+  return `<div class="script-row"><div class="script-badge">${badge}</div><div class="script-content"><div class="script-title">${title}</div><div class="script-text">${text}</div></div>${canDel?'<button class="script-row-del" onclick="delQ(\''+id+'\')" title="Remove">×</button>':''}<button class="script-edit" onclick="startE('${id}')" title="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>`;
+}
 
-  const config = getConfig();
-  document.getElementById('live-project').textContent = config.projectName || 'Interview Session';
-  document.getElementById('transcript').innerHTML = '<div id="transcript-empty" style="text-align:center;color:#3A3530;font-size:14px;margin-top:40px;">Waiting for conversation to begin...</div>';
+function startE(id){editIdx=id;renderScript();setTimeout(()=>{const e=document.getElementById('ei-'+id);if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}},50);}
+function saveE(id){const e=document.getElementById('ei-'+id);if(!e||!e.value.trim())return;if(id==='intro')scriptIntro=e.value.trim();else if(id==='outro')scriptOutro=e.value.trim();else{const i=parseInt(id.split('-')[1]);questions[i]=e.value.trim();}editIdx=null;renderScript();}
+function cancelE(){editIdx=null;renderScript();}
+function delQ(id){const i=parseInt(id.split('-')[1]);questions.splice(i,1);renderScript();}
+function addQ(){const inp=document.getElementById('add-q-in');if(inp.value.trim()){questions.push(inp.value.trim());inp.value='';renderScript();}}
 
-  timerInterval = setInterval(() => {
-    duration++;
-    document.getElementById('timer').textContent = formatTime(duration);
-  }, 1000);
+// ═══ MODE ═══
+function updateMode(){
+  const key=document.getElementById('vapi-key').value.trim();isVoiceMode=key.length>10;
+  const b=document.getElementById('mode-badge'),st=document.getElementById('mode-status'),h=document.getElementById('mode-hint');
+  if(isVoiceMode){
+    b.style.background='rgba(76,175,80,0.12)';b.style.color='#4CAF50';b.textContent='VOICE';
+    st.style.background='rgba(76,175,80,0.12)';st.style.color='#4CAF50';st.textContent='● Voice Ready';
+    h.textContent='Real-time voice enabled';
+    try{if(typeof Vapi!=='undefined'){vapiInstance=new Vapi(key);setupVapi();console.log('[VoxR] Vapi ok');}}catch(e){console.error('[VoxR] Vapi err:',e);}
+  }else{
+    b.style.background='rgba(255,193,7,0.12)';b.style.color='#FFC107';b.textContent='DEMO';
+    st.style.background='rgba(255,193,7,0.12)';st.style.color='#FFC107';st.textContent='● Demo Mode';
+    h.textContent='Get a key free at vapi.ai';vapiInstance=null;
+  }
+}
 
-  if (isVoiceMode && vapiInstance) {
-    // ─── REAL VOICE MODE ───
+// ═══ VAPI ═══
+function setupVapi(){
+  if(!vapiInstance)return;
+  vapiInstance.on('call-start',()=>{setLS('live');addPR();document.getElementById('pulse-core').classList.add('active');});
+  vapiInstance.on('call-end',()=>{setLS('ended');rmPR();document.getElementById('pulse-core').classList.remove('active');});
+  vapiInstance.on('volume-level',v=>{const e=document.getElementById('pulse-vol');if(e)e.style.transform='scale('+(1+v*0.4)+')';});
+  vapiInstance.on('message',m=>{if(m.type==='transcript'&&m.transcriptType==='final')addTM(m.role,m.transcript);});
+  vapiInstance.on('error',e=>{console.error('[VoxR] err:',e);addTM('assistant','⚠️ '+( e?.message||e?.error?.message||'Voice error'));});
+}
+function setLS(s){const e=document.getElementById('live-status');if(s==='live'){e.textContent='● LIVE';e.style.background='rgba(76,175,80,0.15)';e.style.color='#4CAF50';}else if(s==='connecting'){e.textContent='● CONNECTING';e.style.background='rgba(255,193,7,0.15)';e.style.color='#FFC107';}else{e.textContent='● ENDED';e.style.background='rgba(255,87,51,0.15)';e.style.color='#FF5733';}}
+
+// ═══ INTERVIEW ═══
+function startInterview(){
+  transcriptData=[];duration=0;showPhase('live');
+  const cfg=getCfg();
+  document.getElementById('live-project').textContent=cfg.projectName||'Interview Session';
+  document.getElementById('transcript').innerHTML='<div id="transcript-empty" style="text-align:center;color:#3A3530;font-size:14px;margin-top:40px;">Waiting for conversation...</div>';
+  timerInterval=setInterval(()=>{duration++;document.getElementById('timer').textContent=fmtT(duration);},1000);
+
+  if(isVoiceMode&&vapiInstance){
     document.getElementById('demo-input-wrapper').classList.add('hidden');
     document.getElementById('voice-active-hint').classList.remove('hidden');
     document.getElementById('voice-badge').classList.remove('hidden');
-    setLiveStatus('connecting');
-
-    const systemPrompt = `You are a skilled user researcher conducting a structured interview. Your style is ${config.tone}.
-
-RESEARCH OBJECTIVE: ${config.objective}
-TARGET COHORT: ${config.cohort}
-
-INTERVIEW SCRIPT — Follow this structure but adapt naturally:
-${config.questions.map((q, i) => (i+1) + '. ' + q).join('\n')}
-
-INSTRUCTIONS:
-- Ask questions one at a time, listen carefully, ask follow-up probes
-- Use active listening — reference what the user just said
-- If a user gives a short answer, gently probe deeper
-- Keep the conversation natural and flowing
-- After all questions, thank them warmly
-- Keep the total interview under 10 minutes`;
-
-    console.log('[Interviewly] Starting Vapi call...');
-
+    setLS('connecting');
+    const sp=`You are a skilled user researcher. Style: ${cfg.tone}.\n\nOBJECTIVE: ${cfg.objective}\nCOHORT: ${cfg.cohort}\n\nSCRIPT:\nIntro: ${scriptIntro}\n${cfg.questions.map((q,i)=>'Q'+(i+1)+': '+q).join('\n')}\nOutro: ${scriptOutro}\n\nINSTRUCTIONS:\n- Start with intro, ask questions one at a time\n- Listen carefully, ask follow-ups\n- Reference what user said\n- Keep natural, under 10 min\n- Close with outro`;
     vapiInstance.start({
-      model: {
-        provider: "openai",
-        model: "gpt-4o",
-        messages: [{ role: "system", content: systemPrompt }],
-        temperature: 0.7,
-      },
-      voice: {
-        provider: "11labs",
-        voiceId: "21m00Tcm4TlvDq8ikWAM",
-        stability: 0.6,
-        similarityBoost: 0.8,
-      },
-      transcriber: {
-        provider: "deepgram",
-        model: "nova-2",
-        language: "en",
-      },
-      name: config.projectName || "User Interview",
-      firstMessage: "Hi there! Thanks so much for taking the time to chat with me today. I'd love to hear your thoughts on " + (config.objective || "your experience").substring(0, 80) + ". Ready to get started?",
-      silenceTimeoutSeconds: 30,
-      maxDurationSeconds: 900,
-    }).then(() => {
-      console.log('[Interviewly] Vapi start() resolved');
-    }).catch(err => {
-      console.error('[Interviewly] Vapi start error:', err);
-      addTranscriptMessage('assistant', '⚠️ Failed to start voice: ' + (err?.message || JSON.stringify(err)));
-      setLiveStatus('ended');
-    });
-
-    document.getElementById('pulse-core').classList.add('active');
-    addPulseRings();
-
-  } else {
-    // ─── DEMO MODE ───
+      model:{provider:"openai",model:"gpt-4o",messages:[{role:"system",content:sp}],temperature:0.7},
+      voice:{provider:"11labs",voiceId:"21m00Tcm4TlvDq8ikWAM",stability:0.6,similarityBoost:0.8},
+      transcriber:{provider:"deepgram",model:"nova-2",language:"en"},
+      name:cfg.projectName||"Interview",firstMessage:scriptIntro,silenceTimeoutSeconds:30,maxDurationSeconds:900,
+    }).catch(e=>{addTM('assistant','⚠️ '+( e?.message||JSON.stringify(e)));setLS('ended');});
+    document.getElementById('pulse-core').classList.add('active');addPR();
+  }else{
     document.getElementById('demo-input-wrapper').classList.remove('hidden');
     document.getElementById('voice-active-hint').classList.add('hidden');
     document.getElementById('voice-badge').classList.add('hidden');
     document.getElementById('pulse-core').classList.add('active');
-    setLiveStatus('live');
-    addPulseRings();
-
-    setTimeout(() => {
-      addTranscriptMessage('assistant', "Hi there! Thanks so much for taking the time to chat. I'm doing some research on " + (config.objective || 'your experience') + ". Shall we get started?");
-    }, 1200);
+    setLS('live');addPR();
+    setTimeout(()=>addTM('assistant',scriptIntro||'Hi! Shall we get started?'),1200);
   }
 }
 
-function endInterview() {
-  if (timerInterval) clearInterval(timerInterval);
-  if (isVoiceMode && vapiInstance) {
-    try { vapiInstance.stop(); } catch(e) { console.error('[Interviewly] Stop error:', e); }
-  }
-  removePulseRings();
-  document.getElementById('pulse-core').classList.remove('active');
-  setLiveStatus('ended');
-
-  if (transcriptData.length > 0) {
-    interviews.push({ transcript: [...transcriptData], duration, config: getConfig() });
-  }
-  renderReview();
-  showPhase('review');
+function endInterview(){
+  if(timerInterval)clearInterval(timerInterval);
+  if(isVoiceMode&&vapiInstance)try{vapiInstance.stop();}catch(e){}
+  rmPR();document.getElementById('pulse-core').classList.remove('active');setLS('ended');
+  if(transcriptData.length>0)interviews.push({transcript:[...transcriptData],duration,config:getCfg()});
+  renderReview();showPhase('review');
 }
 
-// ─── Messages ───────────────────────────────────────────────────
-async function sendMessage() {
-  const input = document.getElementById('user-input');
-  const text = input.value.trim();
-  if (!text || isThinking) return;
-  input.value = '';
-  addTranscriptMessage('user', text);
-
-  if (!isVoiceMode) {
-    isThinking = true;
-    document.getElementById('send-btn').style.opacity = '0.5';
-    showThinking();
-    try {
-      const config = getConfig();
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514', max_tokens: 1000,
-          messages: [{ role: 'user', content: 'You are a user researcher. Style: ' + config.tone + '. Objective: ' + config.objective + '. Questions: ' + config.questions.join('; ') + '\n\nThe interviewee said: "' + text + '"\n\nRespond as the interviewer with a brief natural follow-up (1-3 sentences). Plain text only.' }],
-        }),
-      });
-      const data = await resp.json();
-      hideThinking();
-      addTranscriptMessage('assistant', data.content?.[0]?.text || "That's interesting — tell me more?");
-    } catch(e) {
-      hideThinking();
-      addTranscriptMessage('assistant', "That's interesting — can you tell me more about that?");
-    } finally {
-      isThinking = false;
-      document.getElementById('send-btn').style.opacity = '1';
-    }
+// ═══ MESSAGES ═══
+async function sendMsg(){
+  const inp=document.getElementById('user-input'),t=inp.value.trim();
+  if(!t||isThinking)return;inp.value='';addTM('user',t);
+  if(!isVoiceMode){
+    isThinking=true;document.getElementById('send-btn').style.opacity='0.5';showTB();
+    try{
+      const cfg=getCfg();
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+          messages:[{role:'user',content:'You are a user researcher. Style: '+cfg.tone+'. Objective: '+cfg.objective+'. Questions: '+cfg.questions.join('; ')+'\n\nInterviewee said: "'+t+'"\n\nRespond as interviewer, 1-3 sentences. Plain text.'}]})});
+      const d=await r.json();hideTB();addTM('assistant',d.content?.[0]?.text||'Tell me more?');
+    }catch(e){hideTB();addTM('assistant','Can you tell me more about that?');}
+    finally{isThinking=false;document.getElementById('send-btn').style.opacity='1';}
   }
 }
 
-function addTranscriptMessage(role, text) {
-  const container = document.getElementById('transcript');
-  const empty = document.getElementById('transcript-empty');
-  if (empty) empty.remove();
-  transcriptData.push({ role, text, time: new Date().toISOString() });
-  const w = document.createElement('div');
-  w.style.cssText = 'display:flex;justify-content:' + (role === 'user' ? 'flex-end' : 'flex-start') + ';animation:fade-up 0.3s ease-out;';
-  const b = document.createElement('div');
-  b.className = 'msg-bubble ' + (role === 'user' ? 'msg-user' : 'msg-ai');
-  b.innerHTML = '<div class="msg-label">' + (role === 'user' ? 'Interviewee' : 'AI Interviewer') + '</div>' + text;
-  w.appendChild(b);
-  container.appendChild(w);
-  container.scrollTop = container.scrollHeight;
+function addTM(role,text){
+  const c=document.getElementById('transcript'),em=document.getElementById('transcript-empty');if(em)em.remove();
+  transcriptData.push({role,text,time:new Date().toISOString()});
+  const w=document.createElement('div');w.style.cssText='display:flex;justify-content:'+(role==='user'?'flex-end':'flex-start')+';animation:fade-up 0.3s ease-out;';
+  const b=document.createElement('div');b.className='msg-bubble '+(role==='user'?'msg-user':'msg-ai');
+  b.innerHTML='<div class="msg-label">'+(role==='user'?'Interviewee':'AI Interviewer')+'</div>'+text;
+  w.appendChild(b);c.appendChild(w);c.scrollTop=c.scrollHeight;
+}
+function showTB(){const c=document.getElementById('transcript'),d=document.createElement('div');d.id='tb';d.style.cssText='display:flex;justify-content:flex-start;';d.innerHTML='<div class="msg-bubble msg-ai thinking"><span>●</span><span> ●</span><span> ●</span></div>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function hideTB(){const e=document.getElementById('tb');if(e)e.remove();}
+
+// ═══ PULSE ═══
+function addPR(){rmPR();const c=document.getElementById('pulse-container');['pulse-outer','pulse-mid','pulse-vol'].forEach(cls=>{const d=document.createElement('div');d.className=cls;d.id=cls;c.insertBefore(d,c.firstChild);});}
+function rmPR(){['pulse-outer','pulse-mid','pulse-vol'].forEach(id=>{const e=document.getElementById(id);if(e)e.remove();});}
+
+// ═══ REVIEW ═══
+function renderReview(){
+  const el=document.getElementById('phase-review');
+  el.innerHTML='<div style="margin-bottom:32px;"><div class="badge" style="background:rgba(76,175,80,0.12);color:#4CAF50;margin-bottom:16px;">Completed</div><h1 class="serif" style="font-size:28px;font-weight:700;margin-bottom:8px;">Interview Sessions</h1><p style="color:#8A8580;font-size:14px;">'+interviews.length+' interview'+(interviews.length!==1?'s':'')+' completed</p></div>'+
+    interviews.map((iv,i)=>'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="color:#F5F0EB;font-weight:600;">Session '+(i+1)+'</span><span class="mono" style="color:#8A8580;font-size:12px;">'+fmtT(iv.duration)+' · '+iv.transcript.length+' msgs</span></div><div style="color:#5A5550;font-size:13px;line-height:1.5;">'+iv.transcript.slice(0,2).map(m=>m.text).join(' → ').substring(0,140)+'...</div></div>').join('')+
+    '<div style="display:flex;gap:10px;margin-top:24px;"><button onclick="wizStep=1;goStep(1);showPhase(\'setup\')" style="flex:1;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#C8C3BE;font-size:14px;font-weight:600;cursor:pointer;">+ New</button><button onclick="doSynth()" style="flex:1;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#FF5733,#FF8A65);color:#FFF;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(255,87,51,0.3);">Synthesize →</button></div>';
 }
 
-function showThinking() {
-  const c = document.getElementById('transcript');
-  const d = document.createElement('div');
-  d.id = 'thinking-indicator';
-  d.style.cssText = 'display:flex;justify-content:flex-start;';
-  d.innerHTML = '<div class="msg-bubble msg-ai thinking"><span>●</span><span> ●</span><span> ●</span></div>';
-  c.appendChild(d); c.scrollTop = c.scrollHeight;
-}
-function hideThinking() { const e = document.getElementById('thinking-indicator'); if(e) e.remove(); }
-
-// ─── Pulse Rings ────────────────────────────────────────────────
-function addPulseRings() {
-  removePulseRings();
-  const c = document.getElementById('pulse-container');
-  const o = document.createElement('div'); o.className='pulse-outer'; o.id='pulse-outer';
-  const m = document.createElement('div'); m.className='pulse-mid'; m.id='pulse-mid';
-  const v = document.createElement('div'); v.className='pulse-vol'; v.id='pulse-vol';
-  c.insertBefore(v, c.firstChild);
-  c.insertBefore(m, c.firstChild);
-  c.insertBefore(o, c.firstChild);
-}
-function removePulseRings() {
-  ['pulse-outer','pulse-mid','pulse-vol'].forEach(id => { const e=document.getElementById(id); if(e) e.remove(); });
+// ═══ SYNTHESIS ═══
+async function doSynth(){
+  showPhase('synthesis');const el=document.getElementById('phase-synthesis');
+  el.innerHTML='<div style="text-align:center;padding-top:80px;"><div style="width:48px;height:48px;border-radius:50%;border:3px solid rgba(255,87,51,0.2);border-top-color:#FF5733;animation:spin 1s linear infinite;margin:0 auto 20px;"></div><div style="color:#C8C3BE;font-size:16px;font-weight:600;">Analyzing...</div></div>';
+  const cfg=getCfg();let s;
+  try{
+    const txt=interviews.map((iv,i)=>'=== S'+(i+1)+' ('+fmtT(iv.duration)+') ===\n'+iv.transcript.map(m=>(m.role==='user'?'USER':'AI')+': '+m.text).join('\n')).join('\n\n');
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        messages:[{role:'user',content:'Senior researcher.\n\nOBJ: '+cfg.objective+'\nCOHORT: '+cfg.cohort+'\n\nTRANSCRIPTS:\n'+txt+'\n\nJSON only:\n{"themes":[{"label":"T","sentiment":"positive|negative|mixed","frequency":"X of Y","insight":"S"}],"recommendations":["R"],"quotes":[{"text":"Q","session":1,"context":"C"}],"summary":"S"}\n\n2-4 themes, 3-5 recs, 2-4 quotes.'}]})});
+    const d=await r.json();s=JSON.parse((d.content?.map(b=>b.text||'').join('')||'').replace(/```json|```/g,'').trim());
+  }catch(e){s={themes:[{label:"Pain Points",sentiment:"negative",frequency:interviews.length+"/"+interviews.length,insight:"Frustration with current workflows."}],recommendations:["Focus on top pain","Flexible onboarding","Clear aha moment"],quotes:interviews.slice(0,2).map((iv,i)=>({text:iv.transcript.find(m=>m.role==='user')?.text||'-',session:i+1,context:"Response"})),summary:"Users revealed frustration and interest in alternatives."};}
+  renderSynth(s,cfg);
 }
 
-// ─── Review ─────────────────────────────────────────────────────
-function renderReview() {
-  const el = document.getElementById('phase-review');
-  el.innerHTML = '<div style="margin-bottom:32px;"><div class="badge" style="background:rgba(76,175,80,0.12);color:#4CAF50;margin-bottom:16px;">Completed</div><h1 class="serif" style="font-size:28px;font-weight:700;margin-bottom:8px;">Interview Sessions</h1><p style="color:#8A8580;font-size:14px;">' + interviews.length + ' interview' + (interviews.length!==1?'s':'') + ' completed</p></div>' +
-    interviews.map((iv,i) => '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="color:#F5F0EB;font-weight:600;font-size:15px;">Session '+(i+1)+'</span><span class="mono" style="color:#8A8580;font-size:12px;">'+formatTime(iv.duration)+' · '+iv.transcript.length+' msgs</span></div><div style="color:#5A5550;font-size:13px;line-height:1.5;">'+iv.transcript.slice(0,2).map(m=>m.text).join(' → ').substring(0,140)+'...</div></div>').join('') +
-    '<div style="display:flex;gap:10px;margin-top:24px;"><button onclick="showPhase(\'setup\')" style="flex:1;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#C8C3BE;font-size:14px;font-weight:600;cursor:pointer;">+ New Interview</button><button onclick="synthesize()" style="flex:1;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#FF5733,#FF8A65);color:#FFF;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(255,87,51,0.3);">Synthesize Findings →</button></div>';
+function renderSynth(s,cfg){
+  const el=document.getElementById('phase-synthesis');
+  const sentBg=t=>t==='negative'?'rgba(255,87,51,0.15)':t==='positive'?'rgba(76,175,80,0.15)':'rgba(255,193,7,0.15)';
+  const sentCol=t=>t==='negative'?'#FF5733':t==='positive'?'#4CAF50':'#FFC107';
+  el.innerHTML='<div style="margin-bottom:28px;"><div class="badge" style="background:rgba(156,39,176,0.12);color:#CE93D8;margin-bottom:16px;">AI Synthesis</div><h1 class="serif" style="font-size:28px;font-weight:700;margin-bottom:8px;">Research Findings</h1><p style="color:#8A8580;font-size:14px;">'+(cfg.projectName||'Project')+' · '+interviews.length+' session'+(interviews.length!==1?'s':'')+'</p></div>'+
+    (s.summary?'<div style="padding:16px;border-radius:14px;margin-bottom:24px;background:linear-gradient(135deg,rgba(255,87,51,0.08),rgba(156,39,176,0.06));border:1px solid rgba(255,87,51,0.12);"><div style="color:#FF8A65;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Executive Summary</div><p style="color:#E0DBD6;font-size:14px;line-height:1.7;">'+s.summary+'</p></div>':'')+
+    '<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Key Themes</h2>'+
+    s.themes.map(t=>'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;"><span style="color:#F5F0EB;font-weight:600;">'+t.label+'</span><div style="display:flex;gap:6px;"><span style="font-size:11px;padding:3px 10px;border-radius:10px;font-weight:600;background:'+sentBg(t.sentiment)+';color:'+sentCol(t.sentiment)+';">'+t.sentiment+'</span><span class="mono" style="color:#5A5550;font-size:11px;">'+t.frequency+'</span></div></div><p style="color:#8A8580;font-size:13px;line-height:1.6;">'+t.insight+'</p></div>').join('')+
+    '<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Recommendations</h2><div style="padding:16px;border-radius:14px;background:rgba(255,87,51,0.06);border:1px solid rgba(255,87,51,0.12);">'+
+    s.recommendations.map((r,i)=>'<div style="display:flex;gap:10px;padding:10px 0;'+(i<s.recommendations.length-1?'border-bottom:1px solid rgba(255,255,255,0.04);':'')+'"><span class="mono" style="color:#FF5733;font-weight:700;font-size:13px;min-width:24px;">'+String(i+1).padStart(2,'0')+'</span><span style="color:#C8C3BE;font-size:14px;line-height:1.5;">'+r+'</span></div>').join('')+'</div>'+
+    (s.quotes?.length?'<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Notable Quotes</h2>'+s.quotes.map(q=>'<div style="padding:14px 16px;border-radius:14px;margin-bottom:8px;background:rgba(255,255,255,0.03);border-left:3px solid #FF5733;"><p style="color:#C8C3BE;font-size:14px;line-height:1.6;font-style:italic;margin-bottom:6px;">&ldquo;'+q.text+'&rdquo;</p><span style="color:#5A5550;font-size:12px;">— Session '+q.session+'</span></div>').join(''):'')+
+    '<button onclick="showPhase(\'review\')" style="width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#C8C3BE;font-size:14px;font-weight:600;cursor:pointer;margin-top:24px;">← Back</button>';
 }
 
-// ─── Synthesis ──────────────────────────────────────────────────
-async function synthesize() {
-  showPhase('synthesis');
-  const el = document.getElementById('phase-synthesis');
-  el.innerHTML = '<div style="text-align:center;padding-top:80px;"><div style="width:48px;height:48px;border-radius:50%;border:3px solid rgba(255,87,51,0.2);border-top-color:#FF5733;animation:spin 1s linear infinite;margin:0 auto 20px;"></div><div style="color:#C8C3BE;font-size:16px;font-weight:600;margin-bottom:6px;">Analyzing Transcripts...</div><div style="color:#5A5550;font-size:13px;">Claude is identifying themes and patterns</div></div>';
+// ═══ HELPERS ═══
+function showPhase(p){currentPhase=p;['setup','live','review','synthesis'].forEach(x=>document.getElementById('phase-'+x).classList[x===p?'remove':'add']('hidden'));}
+function renderTones(){const el=document.getElementById('tone-buttons');['Casual & Friendly','Professional','Deep & Probing'].forEach(t=>{const b=document.createElement('button');b.style.cssText='padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.2s;'+(t===selectedTone?'background:linear-gradient(135deg,#FF5733,#FF8A65);color:#FFF;box-shadow:0 4px 15px rgba(255,87,51,0.3);':'background:rgba(255,255,255,0.06);color:#8A8580;');b.textContent=t;b.onclick=()=>{selectedTone=t;el.querySelectorAll('button').forEach(x=>{x.style.background='rgba(255,255,255,0.06)';x.style.color='#8A8580';x.style.boxShadow='none';});b.style.background='linear-gradient(135deg,#FF5733,#FF8A65)';b.style.color='#FFF';b.style.boxShadow='0 4px 15px rgba(255,87,51,0.3)';};el.appendChild(b);});}
+function getCfg(){return{projectName:document.getElementById('project-name').value.trim(),objective:document.getElementById('objective').value.trim(),cohort:document.getElementById('cohort').value.trim(),tone:selectedTone,questions:[...questions]};}
+function fmtT(s){return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');}
 
-  const config = getConfig();
-  let s;
-  try {
-    const txt = interviews.map((iv,i) => '=== SESSION '+(i+1)+' ('+formatTime(iv.duration)+') ===\n' + iv.transcript.map(m => (m.role==='user'?'INTERVIEWEE':'INTERVIEWER')+': '+m.text).join('\n')).join('\n\n');
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000,
-        messages:[{role:'user',content:'You are a senior user researcher.\n\nOBJECTIVE: '+config.objective+'\nCOHORT: '+config.cohort+'\nPROJECT: '+config.projectName+'\n\nTRANSCRIPTS:\n'+txt+'\n\nRespond ONLY in JSON (no markdown):\n{"themes":[{"label":"Theme","sentiment":"positive|negative|mixed","frequency":"X of Y","insight":"Summary"}],"recommendations":["Rec"],"quotes":[{"text":"Quote","session":1,"context":"Context"}],"summary":"Summary"}\n\n2-4 themes, 3-5 recs, 2-4 quotes.'}],
-      }),
-    });
-    const d = await resp.json();
-    s = JSON.parse((d.content?.map(b=>b.text||'').join('')||'').replace(/```json|```/g,'').trim());
-  } catch(e) {
-    s = { themes:[{label:"User Pain Points",sentiment:"negative",frequency:interviews.length+" of "+interviews.length,insight:"Users expressed frustration with current workflows."}], recommendations:["Focus MVP on top pain point","Design flexible onboarding","Create clear aha moment"], quotes:interviews.slice(0,2).map((iv,i)=>({text:iv.transcript.find(m=>m.role==='user')?.text||'-',session:i+1,context:"Response"})), summary:"Across "+interviews.length+" session(s), users revealed frustration with existing solutions." };
-  }
-  renderSynthesis(s, config);
-}
-
-function renderSynthesis(s, config) {
-  const el = document.getElementById('phase-synthesis');
-  el.innerHTML = '<div style="margin-bottom:28px;"><div class="badge" style="background:rgba(156,39,176,0.12);color:#CE93D8;margin-bottom:16px;">AI Synthesis</div><h1 class="serif" style="font-size:28px;font-weight:700;margin-bottom:8px;">Research Findings</h1><p style="color:#8A8580;font-size:14px;">'+config.projectName+' · '+interviews.length+' session'+(interviews.length!==1?'s':'')+'</p></div>' +
-    (s.summary?'<div style="padding:16px;border-radius:14px;margin-bottom:24px;background:linear-gradient(135deg,rgba(255,87,51,0.08),rgba(156,39,176,0.06));border:1px solid rgba(255,87,51,0.12);"><div style="color:#FF8A65;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Executive Summary</div><p style="color:#E0DBD6;font-size:14px;line-height:1.7;">'+s.summary+'</p></div>':'') +
-    '<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Key Themes</h2>' +
-    s.themes.map(t=>'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;"><span style="color:#F5F0EB;font-weight:600;font-size:15px;">'+t.label+'</span><div style="display:flex;gap:6px;align-items:center;"><span style="font-size:11px;padding:3px 10px;border-radius:10px;font-weight:600;background:'+(t.sentiment==='negative'?'rgba(255,87,51,0.15)':t.sentiment==='positive'?'rgba(76,175,80,0.15)':'rgba(255,193,7,0.15)')+';color:'+(t.sentiment==='negative'?'#FF5733':t.sentiment==='positive'?'#4CAF50':'#FFC107')+';">'+t.sentiment+'</span><span class="mono" style="color:#5A5550;font-size:11px;">'+t.frequency+'</span></div></div><p style="color:#8A8580;font-size:13px;line-height:1.6;">'+t.insight+'</p></div>').join('') +
-    '<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Recommendations</h2><div style="padding:16px;border-radius:14px;background:rgba(255,87,51,0.06);border:1px solid rgba(255,87,51,0.12);">' +
-    s.recommendations.map((r,i)=>'<div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;'+(i<s.recommendations.length-1?'border-bottom:1px solid rgba(255,255,255,0.04);':'')+'"><span class="mono" style="color:#FF5733;font-weight:700;font-size:13px;min-width:24px;">'+String(i+1).padStart(2,'0')+'</span><span style="color:#C8C3BE;font-size:14px;line-height:1.5;">'+r+'</span></div>').join('')+'</div>' +
-    (s.quotes?.length?'<h2 style="color:#C8C3BE;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 12px;">Notable Quotes</h2>'+s.quotes.map(q=>'<div style="padding:14px 16px;border-radius:14px;margin-bottom:8px;background:rgba(255,255,255,0.03);border-left:3px solid #FF5733;"><p style="color:#C8C3BE;font-size:14px;line-height:1.6;font-style:italic;margin-bottom:6px;">&ldquo;'+q.text+'&rdquo;</p><span style="color:#5A5550;font-size:12px;">— Session '+q.session+(q.context?' · '+q.context:'')+'</span></div>').join(''):'') +
-    '<button onclick="showPhase(\'review\')" style="width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:#C8C3BE;font-size:14px;font-weight:600;cursor:pointer;margin-top:24px;">← Back to Sessions</button>';
-}
-
-// ─── UI Helpers ─────────────────────────────────────────────────
-function showPhase(phase) {
-  currentPhase = phase;
-  ['setup','live','review','synthesis'].forEach(p => {
-    document.getElementById('phase-'+p).classList[p===phase?'remove':'add']('hidden');
-  });
-  updateProgressDots();
-}
-
-function updateProgressDots() {
-  const phases=['setup','live','review'];
-  const idx=phases.indexOf(currentPhase==='synthesis'?'review':currentPhase);
-  document.getElementById('progress-dots').innerHTML = phases.map((_,i)=>
-    '<div style="width:8px;height:8px;border-radius:4px;transition:all 0.3s;background:'+(i===idx?'#FF5733':i<idx?'rgba(255,87,51,0.4)':'rgba(255,255,255,0.1)')+';"></div>'
-  ).join('');
-}
-
-function renderToneButtons() {
-  const el=document.getElementById('tone-buttons');
-  ['Casual & Friendly','Professional','Deep & Probing'].forEach(tone=>{
-    const btn=document.createElement('button');
-    btn.className='tone-btn'+(tone===selectedTone?' active':'');
-    btn.textContent=tone;
-    btn.onclick=()=>{ selectedTone=tone; document.querySelectorAll('.tone-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); };
-    el.appendChild(btn);
-  });
-}
-
-function renderQuestions() {
-  const el=document.getElementById('questions-list'); el.innerHTML='';
-  questions.forEach((q,i)=>{
-    const row=document.createElement('div'); row.className='q-row';
-    row.innerHTML='<span style="color:#FF5733;font-weight:700;font-size:13px;min-width:24px;padding-top:1px;font-family:JetBrains Mono,monospace;">'+String(i+1).padStart(2,'0')+'</span><span style="color:#C8C3BE;font-size:14px;flex:1;line-height:1.5;">'+q+'</span><button onclick="removeQuestion('+i+')" style="background:none;border:none;color:#5A5550;cursor:pointer;font-size:18px;padding:0 4px;line-height:1;">×</button>';
-    el.appendChild(row);
-  });
-}
-
-function addQuestion() {
-  const input=document.getElementById('new-question');
-  if(input.value.trim()){ questions.push(input.value.trim()); input.value=''; renderQuestions(); }
-}
-function removeQuestion(i) { questions.splice(i,1); renderQuestions(); updateStartButton(); }
-
-function updateStartButton() {
-  const btn=document.getElementById('start-btn');
-  const ok = document.getElementById('objective').value.trim() && questions.length>0;
-  btn.disabled=!ok;
-  btn.style.background = ok ? 'linear-gradient(135deg,#FF5733,#FF8A65)' : 'rgba(255,255,255,0.08)';
-  btn.style.color = ok ? '#FFF' : '#5A5550';
-  btn.style.boxShadow = ok ? '0 8px 30px rgba(255,87,51,0.3)' : 'none';
-  btn.textContent = isVoiceMode ? 'Start Voice Interview →' : 'Start Interview →';
-}
-
-function getConfig() {
-  return {
-    projectName: document.getElementById('project-name').value.trim(),
-    objective: document.getElementById('objective').value.trim(),
-    cohort: document.getElementById('cohort').value.trim(),
-    tone: selectedTone, questions: [...questions],
-  };
-}
-
-function formatTime(s) { return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0'); }
-
-// ─── Boot ───────────────────────────────────────────────────────
 init();
 </script>
 </body>
