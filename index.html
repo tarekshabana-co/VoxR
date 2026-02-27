@@ -220,13 +220,15 @@ const LANG_CONFIG = {
     label: 'English',
     flag: '🇺🇸',
     voiceId: '21m00Tcm4TlvDq8ikWAM', // Rachel
+    voiceModel: 'eleven_flash_v2_5',
     transcriber: { provider: 'deepgram', model: 'nova-2', language: 'en' },
     systemLang: 'Respond in English.',
   },
   'ar-eg': {
     label: 'مصري',
     flag: '🇪🇬',
-    voiceId: 'XB0fDUnXU5powFXDhCwa', // Charlotte — ElevenLabs multilingual female, works great with Arabic
+    voiceId: 'XB0fDUnXU5powFXDhCwa', // Charlotte — works with eleven_multilingual_v2 for Arabic
+    voiceModel: 'eleven_multilingual_v2',
     transcriber: { provider: 'deepgram', model: 'nova-2', language: 'multi' },
     systemLang: 'You MUST respond ONLY in Egyptian Arabic (العامية المصرية). Never use English. Use casual Egyptian dialect, not Modern Standard Arabic.',
   }
@@ -510,7 +512,7 @@ function startInterview(){
     const sp=`You are a skilled user researcher. Style: ${cfg.tone}.\n${lang.systemLang}\n\nOBJECTIVE: ${cfg.objective}\nCOHORT: ${cfg.cohort}\n\nSCRIPT:\nIntro: ${scriptIntro}\n${groupScript}\nOutro: ${scriptOutro}\n\nINSTRUCTIONS:\n- Start with intro, then work through each theme group\n- Within each group, follow the flow guidance (e.g. if it says "ask Q2 only if they say yes", respect that)\n- Listen carefully, ask follow-ups based on what user actually says\n- Reference what user said — don't just read questions robotically\n- Keep natural and conversational, under 10 min\n- Close with outro`;
     vapiInstance.start({
       model:{provider:"openai",model:"gpt-4o",messages:[{role:"system",content:sp}],temperature:0.7},
-      voice:{provider:"11labs",voiceId:lang.voiceId,stability:0.6,similarityBoost:0.8},
+      voice:{provider:"11labs",voiceId:lang.voiceId,model:lang.voiceModel,stability:0.6,similarityBoost:0.8},
       transcriber:lang.transcriber,
       name:cfg.projectName||"Interview",firstMessage:scriptIntro,silenceTimeoutSeconds:30,maxDurationSeconds:900,
     }).catch(e=>{addTM('assistant','⚠️ '+( e?.message||JSON.stringify(e)));setLS('ended');});
