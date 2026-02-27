@@ -53,7 +53,7 @@
     .wizard-actions { display: flex; align-items: center; gap: 12px; margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
     .wizard-actions .spacer { flex: 1; }
     .btn-back { padding: 12px 24px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: #C8C3BE; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .btn-next { padding: 12px 24px; border-radius: 10px; border: none; background: linear-gradient(135deg, #10B981, #34D399); color: #FFF; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+    .btn-next { padding: 12px 24px; border-radius: 10px; border: none; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(255,87,51,0.3); }
     .btn-next:disabled { background: rgba(255,255,255,0.08); color: #5A5550; box-shadow: none; cursor: default; }
     /* Script Card */
     .script-card { border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
@@ -237,6 +237,57 @@ function init(){
   renderTones();
   renderLangs();
   document.getElementById('objective').addEventListener('input',()=>{document.getElementById('s1next').disabled=!document.getElementById('objective').value.trim()});
+
+  // ═══ DEMO AUTO-FILL ═══
+  document.getElementById('objective').value='To understand why users track their expenses.';
+  document.getElementById('cohort').value='Users who have made multiple transactions (internet bills, mobile bills, gas bills, etc.) on Flash (our Fintech app in Egypt) without adding or tracking their expenses on Flash.';
+  document.getElementById('s1next').disabled=false;
+  // Auto-open custom script and fill it
+  toggleCustomScript();
+  document.getElementById('custom-intro').value=`السلام عليكم، مع حضرتك طارق من تطبيق فلاش، أستاذ/أستاذة [اسم المستخدم]؟\nأهلاً وسهلاً، ده وقت مناسب أسأل حضرتك كام سؤال عن استخدامك للتطبيق؟`;
+  document.getElementById('custom-intro').dir='rtl';
+  document.getElementById('custom-questions').value=`الأسئلة الأساسية (Core Questions)
+أولاً: سؤال الوعي بالخاصية (Awareness Check)
+هل حضرتك جربت تضيف وتتابع مصاريفك من خلال أبلكيشن فلاش؟
+لو قال "لأ" وطلب توضيح:
+الخاصية دي بتقدر من خلالها تضيف مصاريفك بالكتابة أو عن طريق تسجيل صوتي، وتقسمها لفئات (زي طلبات البيت أو أكل من بره) عشان يجيلك تقارير شهرية عن مصاريفك، وتعرف إنت صرفت أكتر حاجة في إيه.
+ثانياً: الهدف والسؤال المحوري
+إحنا حالياً في فلاش بنعمل بحث عشان نفهم سلوك المستخدمين في متابعة مصاريفهم، عشان نعرف نطور الخاصية دي.
+فهل حضرتك بتتابع مصاريفك بشكل شهري، أو حاولت قبل كده تتابع بس مقدرتش تكمل؟
+المسار الأول: لو الإجابة "أيوة" (بيتابع مصاريفه)
+1) الهدف
+عظيم جداً. في البداية كده، إيه هدفك الأساسي من إنك تتابع مصاريفك؟ يعني بتعمل كده عشان توصل لإيه في الآخر؟
+2) الطريقة
+طيب بتتابع أو بتسجل مصاريفك إزاي بالظبط؟
+لو قال بيستخدم أبلكيشن تاني أو شيت إكسيل:
+إيه اسم الأبلكيشن اللي بتستخدمه؟
+ممكن تحكيلي بتعمل ده إزاي بالظبط؟ يعني أول ما بتصرف حاجة، بتفتح الأبلكيشن وتعمل إيه خطوة بخطوة؟
+إيه أكتر حاجة بتعجبك أو مريحاك في الأبلكيشن ده؟
+إيه نوع التقارير أو التحليلات اللي بتطلعلك منه عن مصاريفك؟ وهل بتحس إنك بتستفيد منها فعلاً؟
+لو قال بيستخدم طريقة تانية (ورقة وقلم، نوتس، بيحسبها في دماغه):
+وليه بتفضل تستخدم الطريقة دي بالذات؟ إيه اللي مريحك فيها؟
+هل فكرت أو جربت قبل كده تستخدم أبلكيشن يسهل عليك الموضوع وتتابع منه؟
+لو أيوة:
+إيه اللي خلاك توقفه وترجع للطريقة بتاعتك؟
+لو لأ:
+إيه اللي مخليك مش حابب فكرة الأبلكيشنز؟
+المسار الثاني: لو الإجابة "لأ" (مابيتابعش مصاريفه)
+هل حاولت قبل كده تتابع وتسجل مصاريفك في فترة معينة وبطلت؟ لو أيوة، إيه اللي خلاك توقف؟
+إيه أكتر حاجة بتخليك مكسل أو مش حابب فكرة تسجيل المصاريف؟ (عشان بتاخد وقت، بتنسى، ولا بتحس إنها بتجيب ضغط؟)
+فكرة إنك تبقى عارف كل قرش رايح فين، دي حاجة بتحسسك بالتحكم والأمان، ولا بتحس إنها حاجة بتجيب توتر؟
+طيب بتعرف منين إنك صرفت كتير أو عديت الليميت بتاعك في الشهر؟
+بتظبط مصاريفك إزاي عشان المرتب يكفي لآخر الشهر من غير ما تسجلها أو تتابعها؟
+لو في طريقة سحرية تعرفك مصاريفك من غير أي مجهود منك خالص، إيه أكتر حاجة هتبقى فضولي تعرفها عن طريقتك في الصرف؟`;
+  document.getElementById('custom-questions').dir='rtl';
+  document.getElementById('custom-outro').value=`أنا كده خلصت كل أسئلتي. في أي حاجة تحب تضيفها أو أي فكرة تحب تشاركها معايا بخصوص الموضوع ده قبل ما نقفل؟\nأنا بشكرك جداً على وقتك وعلى كلامك الصريح، الإجابات دي مفيدة جداً وهتساعدنا نطور فلاش عشان يكون أحسن.\nيومك سعيد، مع السلامة.`;
+  document.getElementById('custom-outro').dir='rtl';
+  // Auto-select Egyptian Arabic
+  selectedLang='ar-eg';
+  // Re-render lang buttons to reflect selection
+  document.getElementById('lang-buttons').innerHTML='';
+  renderLangs();
+  applyLangDirection();
+
   console.log('[VoxR] Init. Vapi:',typeof Vapi!=='undefined');
 }
 
