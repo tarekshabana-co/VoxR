@@ -53,7 +53,7 @@
     .wizard-actions { display: flex; align-items: center; gap: 12px; margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
     .wizard-actions .spacer { flex: 1; }
     .btn-back { padding: 12px 24px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: #C8C3BE; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .btn-next { padding: 12px 24px; border-radius: 10px; border: none; background: linear-gradient(135deg, #FF5733, #FF8A65); color: #FFF; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(255,87,51,0.3); }
+    .btn-next { padding: 12px 24px; border-radius: 10px; border: none; background: linear-gradient(135deg, #10B981, #34D399); color: #FFF; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
     .btn-next:disabled { background: rgba(255,255,255,0.08); color: #5A5550; box-shadow: none; cursor: default; }
     /* Script Card */
     .script-card { border-radius: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
@@ -253,6 +253,7 @@
   <div id="phase-synthesis" class="phase hidden"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/balacodeio/Vapi-Web-UMD@latest/dist/latest/vapi-web-bundle.min.js"></script>
 <script>
 // ═══ STATE ═══
@@ -616,29 +617,26 @@ function parseCSV(text, fname){
 }
 
 function parseXLSX(buffer, fname){
-  // Minimal XLSX parsing — extract shared strings and sheet data
-  // For production, use SheetJS. Here we try a basic approach.
-  // Convert to base64 and use a simple parser
   try{
-    const arr=new Uint8Array(buffer);
-    // Try to find CSV-like content in the XLSX
-    // This is a demo — for real usage, include SheetJS
-    const text=new TextDecoder('utf-8',{fatal:false}).decode(arr);
-    if(text.includes(',')&&text.includes('\n')){
-      parseCSV(text, fname);return;
-    }
-    document.getElementById('upload-sublabel').innerHTML='For the demo, please use <strong>.csv</strong> format';
-    document.getElementById('upload-sublabel').style.color='#FFC107';
+    const wb=XLSX.read(buffer, {type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const data=XLSX.utils.sheet_to_json(ws, {defval:''});
+    if(!data.length){document.getElementById('upload-sublabel').textContent='File appears empty';return;}
+    const headers=Object.keys(data[0]);
+    // Convert all values to strings
+    const rows=data.map(r=>{const o={};headers.forEach(h=>o[h]=String(r[h]||''));return o;}).filter(r=>Object.values(r).some(v=>v));
+    processUserData(headers, rows, fname);
   }catch(e){
-    document.getElementById('upload-sublabel').innerHTML='For the demo, please use <strong>.csv</strong> format';
-    document.getElementById('upload-sublabel').style.color='#FFC107';
+    console.error('[VoxR] XLSX parse error:',e);
+    document.getElementById('upload-sublabel').textContent='Error reading file: '+e.message;
+    document.getElementById('upload-sublabel').style.color='#FF5733';
   }
 }
 
 function processUserData(headers, rows, fname){
   // Normalize column names — find Name and Phone columns
   const nameCol=headers.find(h=>/^(name|اسم|user.?name|الاسم|full.?name)/i.test(h));
-  const phoneCol=headers.find(h=>/^(phone|هاتف|mobile|رقم|tel|number|phone.?number)/i.test(h));
+  const phoneCol=headers.find(h=>/^(phone|هاتف|mobile|رقم|tel|number|phone.?number|phone number)/i.test(h));
   if(!nameCol){
     document.getElementById('upload-sublabel').textContent='Could not find a "Name" column. Please include a Name header.';
     document.getElementById('upload-sublabel').style.color='#FF5733';
